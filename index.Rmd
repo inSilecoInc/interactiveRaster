@@ -1,0 +1,111 @@
+---
+title: "Interactive Rasters with R"
+author: "inSileco Team"
+date: "2020/12/15"
+output:
+  xaringan::moon_reader:
+    css: [default, rd.css, rd-font.css, "hygge"]
+    lib_dir: assets
+    seal: false
+    nature:
+      highlightStyle: dracula
+      countIncrementalSlides: false
+      beforeInit: "macros.js"
+---
+
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  dev = "png",
+  fig.width = 5,
+  fig.height = 4.5,
+  fig.align = 'center',
+  width = 120
+)
+mypar <- list(fg = "#37abc8", bg = "transparent", las = 1)
+par(mypar)
+# library(icon)
+rfa <- function(...) icon::fontawesome(...)
+library(raster)
+rar <- raster("data/bathy.tif")
+class(rar)
+library(stars)
+ras <- read_stars("data/bathy.tif")
+class(ras)
+```
+
+
+class: title-slide, middle
+
+
+## .font200[`r icon::fontawesome("r-project")`asters]
+
+<br><br>
+
+.instructors[
+  .font180[Interactive raster visualisation with `r rfa("r-project")`]
+  <br><br><br>
+  .authors140[David Beauchesne & Kevin Cazelles]
+  <br><br>
+  `r format(Sys.time(), '%B %d, %Y')`
+]
+
+<br><br><br><br>
+
+<img src="img/logoW.png" width="150px"></img>
+
+.instructors[Content under [`r rfa("creative-commons")` `r rfa("creative-commons-by")`](https://creativecommons.org/licenses/by/4.0/) unless othewise specified]
+
+
+
+
+---
+
+class: inverse, center, middle
+
+# Learning objectives
+
+![:custom_hr]()
+
+## .font160[`r rfa("map")`  + `r rfa("r-project")`]
+
+
+---
+
+# Learning objectives
+
+<br>
+
+1. Understand the benefits of manipulating raster files with `r rfa("r-project")`
+
+--
+
+2. Learn how to read and write raster files with `r rfa("r-project")`
+
+--
+
+3. Learn how to manipulate rasters `r rfa("r-project")`
+
+--
+
+4. Learn how to visualize rasters with `r rfa("r-project")`
+
+
+---
+
+class: inverse, center, middle
+
+# `r rfa("info-circle")` Rationalize
+
+![:custom_hr]()
+
+## Why use `r rfa("r-project")` for rasters? (~15min)
+
+
+???
+
+If after the workshop if what follows makes sense and you feel it is kid of true, it would a success.
