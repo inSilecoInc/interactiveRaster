@@ -30,12 +30,6 @@ mypar <- list(fg = "#37abc8", bg = "transparent", las = 1)
 par(mypar)
 # library(icon)
 rfa <- function(...) icon::fontawesome(...)
-library(raster)
-rar <- raster("data/bathy.tif")
-class(rar)
-library(stars)
-ras <- read_stars("data/bathy.tif")
-class(ras)
 ```
 
 
@@ -47,7 +41,7 @@ class: title-slide, middle
 <br><br>
 
 .instructors[
-  .font180[Interactive raster visualisation with `r rfa("r-project")`]
+  .font180[Interactive raster visualization with `r rfa("r-project")`]
   <br><br><br>
   .authors140[David Beauchesne & Kevin Cazelles]
   <br><br>
@@ -80,19 +74,15 @@ class: inverse, center, middle
 
 <br>
 
-1. Understand the benefits of manipulating raster files with `r rfa("r-project")`
+1. Understand the benefits of interactive data visualization with `r rfa("r-project")`
 
 --
 
-2. Learn how to read and write raster files with `r rfa("r-project")`
+2. Learn how to produce and share interactive raster visualizations with `r rfa("r-project")`
 
 --
 
-3. Learn how to manipulate rasters `r rfa("r-project")`
-
---
-
-4. Learn how to visualize rasters with `r rfa("r-project")`
+3. Learn how to build interactive dashboards with `r rfa("r-project")`
 
 
 ---
@@ -103,9 +93,460 @@ class: inverse, center, middle
 
 ![:custom_hr]()
 
-## Why use `r rfa("r-project")` for rasters? (~15min)
+## Why use `r rfa("r-project")` for interactive data visualization? (~10min)
+
+---
+
+# Interactive visualization
+
+## Interactive data visualization
+
+> Interactive data visualization refers to the use of modern data analysis software that enables users to directly manipulate and explore graphical representations of data.
+
+--
+
+## Why use interactive visualization?
+
+  - Identify trends
+  - Observe relationships in data
+  - Data storytelling
+  - Simplify complex data
+  - Share and explore data
+  - Get more out of static visualizations!
+
+---
+
+# Interactive visualization
+
+## Javascript
+
+> [JavaScript](https://www.javascript.com/) is a text-based programming language used both on the client-side and server-side that allows you to make web pages interactive.
+
+--
+
+> JavaScript is the modern interactive web
+
+--
+
+- Close to 1.5 million libraries
+
+--
+
+- Requires in depth knowledge of web-based programming, and, if you are a `r rfa("r-project")` user, learning another programming language
+
+---
+
+# Why `r rfa("r-project")`?
+
+<br>
+
+1. `r rfa("r-project")` packages are actively developped for interactive visualization. See the [htmlwidgets for R](https://www.htmlwidgets.org/) web page for examples
+
+--
+
+2. No need to learn a new language
+
+--
+
+3. Efficiently explore outputs from `r rfa("r-project")` analyses
+
+--
+
+4. Share interactive outputs of `r rfa("r-project")` analyses with collaborators in a variety of formats
+
+--
+
+5. For people still using [ArcGIS](www.arcgis.com) or [QGIS](www.qgis.org) solely for visual data exploration: interactive mapping in `r rfa("r-project")` can now - *partly* - address this
+
+---
+
+# Why `r rfa("r-project")`?
+
+## HTML widgets
+
+In `r rfa("r-project")`, HTML widgets are one of two things:
+
+1. The [`htmlwidgets`](https://cran.r-project.org/package=htmlwidgets) package provides a framework for creating R bindings to JavaScript visualization libraries that can be rendered in a variety of formats (*e.g.* RStudio, R Markdown documents, Shiny applications, or standalone web pages).
+
+--
+
+2. A collection of R packages that allow a user to build interactive visualization (*i.e.* tables, charts, maps, networks, etc) through specific JavaScript libraries
 
 
-???
+---
 
-If after the workshop if what follows makes sense and you feel it is kid of true, it would a success.
+# Why `r rfa("r-project")`?
+
+## `r rfa("r-project")` packages for interactive mapping
+
+### **Interactive visualization in general**
+
+.pull-left[
+- [`plotly`](https://cran.r-project.org/package=plotly) - uses [Plotly.js](https://plotly.com/javascript/)
+- [`highcharter`](https://cran.r-project.org/package=highcharter) - uses [Highcharts.js](https://jkunst.com/highcharter/)
+]
+
+--
+
+.pull-right[
+*Work well with vectorized spatial objects (`sf` and `sp`) in particular. Not so much with rasters yet.*
+]
+
+--
+
+### **Interactive mapping in particular**
+
+.pull-left[
+- [`leaflet`](https://cran.r-project.org/package=leaflet) `r rfa("check")` - uses [Leaflet.js](https://leafletjs.com/)
+]
+
+--
+
+.pull-right[
+*Works well with vectors (`sf` and `sp`) and rasters (`raster` and `stars`)*
+]
+
+--
+
+### **`r rfa("r-project")` packages expanding `leaflet` capabilities**
+
+  - [`mapview`](https://cran.r-project.org/package=mapview) `r rfa("check")`
+  - [`tmap`](https://cran.r-project.org/package=tmap) `r rfa("check")`
+
+---
+
+class: inverse, center, middle
+
+# Interactive raster mapping
+
+![:custom_hr]()
+
+## .font160[`r rfa("map")`  + `r rfa("r-project")`] (1h)
+
+---
+
+# <a href="https://leafletjs.com/"><img src="https://leafletjs.com/docs/images/logo.png" alt="" width="25%"></a>
+
+## JavaScript library
+
+> Leaflet is the leading open-source JavaScript library for mobile-friendly interactive maps. Weighing just about 39 KB of JS, it has all the mapping features most developers ever need.
+
+--
+
+<h3>Examples<sup>*</sup></h3>
+
+- [The New York Times](https://www.nytimes.com/projects/elections/2013/nyc-primary/mayor/map.html)
+- [The Washington Post](https://www.washingtonpost.com/sf/local/2013/11/09/washington-a-world-apart/)
+- [GitHub](https://github.blog/2013-06-13-there-s-a-map-for-that/)
+- [Open Street Map](https://www.openstreetmap.org/#map=11/46.8543/-71.3414)
+
+
+.font70[
+<sup>*</sup>Examples provided in R Studio's [Leaflet for R](https://rstudio.github.io/leaflet/) introduction
+]
+
+
+---
+
+# <a href="https://leafletjs.com/"><img src="https://leafletjs.com/docs/images/logo.png" alt="" width="25%"></a>
+
+## `r rfa("r-project")` package
+
+[`leaflet`](https://cran.r-project.org/package=leaflet) .font90[06/2015 (1.0.0) &nbsp; // &nbsp; 01/2021 (2.0.4.1)]
+
+- The `leaflet` package integrates and controls Leaflet maps through `r rfa("r-project")`
+
+--
+
+### **Features** - .font70[full list [here](https://rstudio.github.io/leaflet/)]
+
+.font90[
+- Interactive panning/zooming
+- Compose maps using:
+  - Map tiles
+  - Markers
+  - Polygons
+  - Lines
+  - Rasters
+  - Popups
+- Embed maps in knitr/R Markdown documents and Shiny apps
+- Render spatial objects
+]
+
+---
+
+# Package [`leaflet`](https://cran.r-project.org/package=leaflet)
+
+## Quick map
+
+.pull-left2[
+Leaflet map centered on the St. Lawrence
+
+```{r, eval = FALSE}
+library(leaflet)
+lf <- leaflet() %>%
+ setView(lng = -63,
+         lat = 48,
+         zoom = 5)
+ addTiles(group = 'Default')
+
+lf
+```
+
+.font70[See [`setView()`](https://www.rdocumentation.org/packages/leaflet/versions/2.0.3/topics/setView) documentation for more options to set map extent.]
+
+
+]
+
+.pull-right2[
+```{r, fig.width = 6, fig.height = 6, echo = FALSE}
+library(leaflet)
+lf <- leaflet() %>%
+ addTiles(group = 'Default') %>%
+ setView(lng = -63,
+         lat = 48,
+         zoom = 5)
+
+lf
+```
+]
+
+
+---
+
+# Package [`leaflet`](https://cran.r-project.org/package=leaflet)
+
+## A quick word on pipes
+
+The pipe operator `%>%` is a chained method that lets you pass an intermediate result to the next function. Thus, these two code chunks provide the same output:
+
+.pull-left[
+```{r}
+# Example with pipe operator
+lf <- leaflet() %>%
+ setView(lng = -63,
+         lat = 48,
+         zoom = 5) %>%
+ addTiles(group = 'Default')
+
+```
+]
+
+.pull-right[
+```{r}
+# Example without pipe operator
+lf <- leaflet()
+lf <- setView(map = lf,
+              lng = -63,
+              lat = 48,
+              zoom = 5)
+lf <- addTiles(map = lf,
+               group = 'Default')
+```
+]
+
+
+
+.font70[`%>%` is similar to the `+` operator used by `ggplot2` and `tmap`]
+
+.font70[See [here](https://www.datacamp.com/community/tutorials/pipe-r-tutorial) for a full description of the history and use of pipes]
+
+---
+
+# Package [`leaflet`](https://cran.r-project.org/package=leaflet)
+
+## Base maps
+
+.pull-left2[
+`addTiles()` uses [OpenStreetMap](https://www.openstreetmap.org/) as default base map.
+
+Use `addProviderTiles()` for other options.
+
+```{r, eval = FALSE}
+leaflet() %>%
+ setView(lng = -63,
+         lat = 48,
+         zoom = 5) %>%
+ addProviderTiles('Esri.OceanBasemap',
+                  group = 'Ocean')
+```
+
+.font90[Full provider list [here](http://leaflet-extras.github.io/leaflet-providers/preview/index.html)]
+]
+
+.pull-right2[
+```{r, fig.width = 6, fig.height = 6, echo = FALSE}
+leaflet() %>%
+      setView(lng = -63,
+              lat = 48,
+              zoom = 5) %>%
+      addProviderTiles('Esri.OceanBasemap',
+                       group = 'Ocean')
+```
+]
+
+---
+
+# Package [`leaflet`](https://cran.r-project.org/package=leaflet)
+
+## Multiple base maps
+
+.pull-left2[
+Use [`addLayersControl()`](https://www.rdocumentation.org/packages/leaflet/versions/2.0.3/topics/addLayersControl) to toggle base map selection.
+
+.font90[
+```{r, eval = FALSE}
+lf <-
+ lf %>%
+ addProviderTiles('Esri.OceanBasemap',
+     group = 'Ocean') %>%
+ addProviderTiles("OpenTopoMap",
+     group = "Topo") %>%
+
+ # Add layer selection
+ addLayersControl(
+     baseGroups = c('Default','Ocean',
+                    'Topo'),
+     position = 'topleft')
+
+lf
+```
+
+Note that we are adding features to the preexisting `lf` object
+]
+]
+
+.pull-right2[
+```{r, fig.width = 6, fig.height = 6, echo = FALSE}
+lf <- lf %>%
+ addProviderTiles('Esri.OceanBasemap',
+     group = 'Ocean') %>%
+ addProviderTiles("OpenTopoMap",
+     group = "Topo") %>%
+
+ # Add layer selection
+ addLayersControl(
+     baseGroups = c('Default','Ocean','Topo'),
+     position = 'topleft')
+
+lf
+```
+]
+
+
+---
+
+# Package [`leaflet`](https://cran.r-project.org/package=leaflet)
+
+## Add rasters
+
+First, get some raster layers from the [`eDrivers`](https://github.com/eDrivers/eDrivers) `r rfa("r-project")` package, which provides data on environmental stressors for the St. Lawrence System.
+
+Let's get data for hypoxia, demersal destructive fisheries (trawl and dredge), and acidification.
+
+```{r, eval = FALSE}
+# Install eDrivers
+# devtools::install_github('eDrivers/eDrivers')
+
+# Load data from eDrivers
+library(eDrivers)
+fetchDrivers(drivers = c('Hypoxia','FisheriesDD','Acidification'),
+             output = 'data')
+
+# Raster objects from eDrivers class objects
+hyp <- Hypoxia[[1]]
+fish <- FisheriesDD[[1]]
+acid <- Acidification[[1]]
+```
+
+.font70[Use `fetchList()` to see all data available in `eDrivers`]
+
+---
+
+# Package [`leaflet`](https://cran.r-project.org/package=leaflet)
+
+## Add rasters
+
+.pull-left2[
+
+Use [`addRasterImage()`](https://www.rdocumentation.org/packages/leaflet/versions/2.0.3/topics/addRasterImage) to add rasters from `raster` package.
+
+```{r, eval = FALSE}
+lf <- lf %>%
+ addRasterImage(hyp,group = 'Hyp') %>%
+ addRasterImage(fish,group = 'Fish') %>%
+ addRasterImage(acid,group = 'Acid') %>%
+
+# Reset layer selection
+addLayersControl(
+   baseGroups = c('Default','Ocean',
+                  'Topo'),
+   overlayGroups = c('Hyp','Fish',
+                     'Acid'),
+   position = 'topleft')
+
+lf
+```
+]
+
+.pull-right2[
+```{r, fig.width = 6, fig.height = 6, echo = FALSE, eval = FALSE}
+# Add layers to leaflet map
+lf <- lf %>%
+ addRasterImage(hyp,group = 'Hyp') %>%
+ addRasterImage(fish,group = 'Fish') %>%
+ addRasterImage(acid,group = 'Acid') %>%
+
+# Reset layer selection
+addLayersControl(
+   baseGroups = c('Default','Ocean','Topo'),
+   overlayGroups = c('Hyp','Fish','Acid'),
+   position = 'topleft')
+
+lf
+```
+]
+
+
+---
+
+# Package [`leaflet`](https://cran.r-project.org/package=leaflet)
+
+## Add rasters
+
+**A couple warnings:**
+
+- `leaflet` uses the [EPSG:3857](https://spatialreference.org/ref/sr-org/7483/) projection and will convert the layers you add automatically. You may want to reproject your rasters manually to save computing time.
+
+--
+
+- Raster size is limited by default. Use argument `maxBytes` in `addRasterImage()` to change this.
+
+--
+
+- You can change the color palette used for rendering rasters with the argument `colors` in `addRasterImage()`
+
+
+---
+
+# Package [`leaflet`](https://cran.r-project.org/package=leaflet)
+
+```{r, echo = FALSE}
+countdown::countdown(minutes = 10, seconds = 0)
+```
+
+<br/>
+
+### `r rfa("star")` Generate a leaflet map with
+
+- Two tile providers (hint: visit [this](http://leaflet-extras.github.io/leaflet-providers/preview/index.html) website)
+- Two raster layers of your choice
+
+### `r rfa("star")` `r rfa("star")` Use a custom color palette to render the rasters
+
+
+---
+
+# Package [`mapview`](https://cran.r-project.org/package=mapview)
+
+Mapview

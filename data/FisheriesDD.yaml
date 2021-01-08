@@ -1,0 +1,28 @@
+title: Fisheries
+subtitle: Demersal destructive
+description: Fishing intensity in the St. Lawrence with demersal destructive gear
+rawData:
+  source: DFO (2016). Departement of Fisheries and Oceans Canada’s Fisheries and Oceans
+    Canada Zonal Interchange File Format (ZIFF) data. A compilation of landing data
+    from logbook data between 2010 and 2015
+  contact1: Sylvain Hurtubise
+  contact2: Hugues Benoît
+  contact3: Hugo Bourdages
+dataDescription:
+  units: kg*km^-2
+  spatialResolution: 1km^2
+  temporalResolution: Event based
+  years: 2010-2015
+  projection:
+    proj4string: +proj=lcc +lat_1=60 +lat_2=46 +lat_0=44 +lon_0=-68.5 +x_0=0 +y_0=0
+      +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs
+    egsp: '32198'
+  extent:
+    xmin: '-61651.54'
+    ymin: '205084.4'
+    xmax: '831853.4'
+    ymax: '910793'
+availability:
+  rawData: 'no'
+  code: 'yes'
+  driver: 'yes'

@@ -1,0 +1,28 @@
+title: Acidification
+subtitle: Aragonite
+description: Ocean acidification index measured from omega aragonite saturation state
+rawData:
+  source: Starr, M., and Chassé, J. (2019). Distribution of omega aragonite in the
+    Estuary and Gulf of St. Lawrence in eastern Canada. Department of Fisheries and
+    Oceans
+  contact:
+    contact1: Michel Starr
+    contact2: Alfonso Mucci
+dataDescription:
+  units: Omega Aragonite
+  spatialResolution: Lat/long
+  temporalResolution: August-September
+  years: '2018'
+  projection:
+    proj4string: +proj=lcc +lat_1=60 +lat_2=46 +lat_0=44 +lon_0=-68.5 +x_0=0 +y_0=0
+      +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs
+    egsp: '32198'
+  extent:
+    xmin: '-190000'
+    ymin: '190000'
+    xmax: '890000'
+    ymax: '990000'
+availability:
+  rawData: 'no'
+  code: 'yes'
+  driver: 'yes'
