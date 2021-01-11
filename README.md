@@ -3,7 +3,7 @@
 In this workshop
 
 - How to visualize rasters interactively
-  - Start with htmlwidgets, developped by RStudio
+  - Start with htmlwidgets, developed by RStudio
   - Crash course in pipe operators -- need to know to work with most of these libraries
   - [plotly](https://plotly.com/r/)
     - [wiki](https://en.wikipedia.org/wiki/Plotly)
@@ -44,8 +44,8 @@ In this workshop
 
 Check:
 
-- htmltools
-- htmlwidgets
+- [`htmltools`](https://CRAN.R-project.org/package=htmltools)
+- [`htmlwidgets`](https://CRAN.R-project.org/package=htmlwidgets)
 - [Geocomputation with R](https://geocompr.robinlovelace.net/adv-map.html)
 - [Interactive maps in R](https://bhaskarvk.github.io/user2017.geodataviz/notebooks/03-Interactive-Maps.nb.html)
 

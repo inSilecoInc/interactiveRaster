@@ -333,10 +333,9 @@ lf <- leaflet() %>%
 ]
 
 .pull-right[
-```{r}
+```{r nopipe}
 # Example without pipe operator
-lf <- leaflet()
-lf <- setView(map = lf,
+lf <- setView(map = leaflet(),
               lng = -63,
               lat = 48,
               zoom = 5)
@@ -349,7 +348,11 @@ lf <- addTiles(map = lf,
 
 .font70[`%>%` is similar to the `+` operator used by `ggplot2` and `tmap`]
 
-.font70[See [here](https://www.datacamp.com/community/tutorials/pipe-r-tutorial) for a full description of the history and use of pipes]
+.font70[See [here](https://www.datacamp.com/community/tutorials/pipe-r-tutorial) for a full description of the history and use of pipes. Note that in the upcoming release 
+
+A [simple native pipe syntax](https://cran.r-project.org/doc/manuals/r-devel/NEWS.html), `|>`, will be included in the upcoming stable release.
+
+]
 
 ---
 
@@ -746,7 +749,7 @@ class: inverse, center, middle
 
 # Interactive data dashboards
 
-- Data dashboards are information managements tools used to visually display, track, analyze and share related data visualizations and that meet a particular objective. They can be viewed as interactive reports.
+- Data dashboards are information management tools used to visually display, track, analyze and share related data visualizations and that meet a particular objective. They can be viewed as interactive reports.
 
 --
 
@@ -781,17 +784,14 @@ class: inverse, center, middle
   - base
   - lattice
   - grid
-  - tabulat data
+  - tabular data
   - text
 
 ---
 
 # Interactive data dashboards in `r rfa("r-project")`
 
-
-<body>
-   <iframe src="https://beta.rstudioconnect.com/jjallaire/htmlwidgets-highcharter/htmlwidgets-highcharter.html#sales-by-category" style="width:100%; height:100%;"></iframe>
-</body>
+<iframe src="https://beta.rstudioconnect.com/jjallaire/htmlwidgets-highcharter/htmlwidgets-highcharter.html#sales-by-category" style="width:100%; height:55vh;"></iframe>
 
 
 ---
@@ -804,10 +804,10 @@ R Markdown produces dynamic document in a variety of format.
 
 ### Opens new possibilities with R:
 
-* make CV, poster & online presentation
-* format scientific paper (`rticles`)
-* help to document your research through notebook (`bookdown`)
-* build an academic blog or website (`blogdown`)
+* make CV, poster ([`posterdown`](https://CRAN.R-project.org/package=posterdown)) & online presentation ([`xaringan`](https://CRAN.R-project.org/package=xaringan))
+* format scientific paper ([`rticles`](https://CRAN.R-project.org/package=rticles))
+* help to document your research through notebook ([`bookdown`](https://CRAN.R-project.org/package=bookdown))
+* build an academic blog or website ([`blogdown`](https://CRAN.R-project.org/package=blogdown))
 
 .font70[<sup>*</sup>See [R Markdown](https://rmarkdown.rstudio.com/) documentation for more details and [here](https://insileco.github.io/ResearchDown/) for a more complete presentation]
 

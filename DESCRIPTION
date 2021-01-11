@@ -6,13 +6,16 @@ Authors@R: c(
   person("inSileco Inc.", role = c("aut", "cre"), email = "kevin.cazelles@gmail.com")
   )
 Imports:
-  countdown
+  countdown,
+  flexdashboard,
   icon,
+  leaflet,
   mapview,
-  xaringan,
   raster,
-  stars
+  stars,
+  tmap,
+  xaringa,
 Remotes: 
   mitchelloharawild/icon
   gadenbuie/countdown
-
+  eDrivers/eDrivers 
