@@ -444,7 +444,7 @@ First, get some raster layers from the [`eDrivers`](https://github.com/eDrivers/
 
 Let's get data for hypoxia, demersal destructive fisheries (trawl and dredge), and acidification.
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Install eDrivers
 # devtools::install_github('eDrivers/eDrivers')
 
@@ -454,9 +454,9 @@ fetchDrivers(drivers = c('Hypoxia','FisheriesDD','Acidification'),
              output = 'data')
 
 # Raster objects from eDrivers class objects
-hyp <- Hypoxia[[1]]
-fish <- FisheriesDD[[1]]
-acid <- Acidification[[1]]
+hyp <- raster('data/Hypoxia.tif')
+fish <- raster('data/FisheriesDD.tif')
+acid <- raster('data/Acidification.tif')
 ```
 
 .font70[Use `fetchList()` to see all data available in `eDrivers`]
@@ -490,7 +490,7 @@ lf
 ]
 
 .pull-right2[
-```{r, fig.width = 6, fig.height = 6, echo = FALSE, eval = FALSE}
+```{r, fig.width = 6, fig.height = 6, echo = FALSE, eval = TRUE}
 # Add layers to leaflet map
 lf <- lf %>%
  addRasterImage(hyp,group = 'Hyp') %>%
@@ -565,7 +565,8 @@ countdown::countdown(minutes = 20, seconds = 0)
 
 # Package [`mapview`](https://cran.r-project.org/package=mapview)
 
-```{r, eval = FALSE, fig.width = 12, fig.height = 6}
+```{r, eval = TRUE, fig.width = 12, fig.height = 6}
+library(mapview)
 mv <- mapview(hyp) + fish + acid
 mv
 ```
@@ -575,7 +576,7 @@ mv
 
 # Package [`mapview`](https://cran.r-project.org/package=mapview)
 
-```{r, eval = FALSE, fig.width = 12, fig.height = 6}
+```{r, eval = TRUE, fig.width = 12, fig.height = 6}
 mapshot(mv, url = 'data/map.html')
 ```
 
@@ -621,7 +622,7 @@ countdown::countdown(minutes = 10, seconds = 0)
 
 .pull-left[
 .font90[
-```{r, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = FALSE}
+```{r, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = TRUE}
 library(tmap)
 tmap_mode("plot")
 static <- tm_shape(fish) +
@@ -633,7 +634,7 @@ static
 
 .pull-right[
 .font90[
-```{r, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = FALSE}
+```{r, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = TRUE}
 library(tmap)
 tmap_mode("view")
 inter <- tm_shape(fish) +
@@ -703,7 +704,7 @@ tm_facets(as.layers = TRUE,
 
 
 .pull-right2[
-```{r, fig.width = 6, fig.height = 6, echo = FALSE, eval = FALSE}
+```{r, fig.width = 6, fig.height = 6, echo = FALSE, eval = TRUE}
 rstack <- stack(hyp, fish, acid)
 tmap_mode("view")
 tm_shape(rstack) +
@@ -1134,7 +1135,7 @@ rmarkdown::render('dashboard.Rmd')
 # Package [`flexdashboard`](https://cran.r-project.org/package=flexdashboard)
 
 ```{r, echo = FALSE}
-countdown::countdown(minutes = 15, seconds = 0)
+countdown::countdown(minutes = 20, seconds = 0)
 ```
 
 <br/>
