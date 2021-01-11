@@ -4,6 +4,12 @@ index.pdf
 assets/
 index_files/
 output/
+dashboard.html
+dashboard.Rmd
+shiny_dashboard.html
+shiny_dashboard.Rmd
+data/map.html
+data/map_files/
 
 # History files
 .Rhistory
