@@ -46,13 +46,21 @@ class: title-slide, middle
   .authors140[David Beauchesne & Kevin Cazelles]
   <br><br>
   `r format(Sys.time(), '%B %d, %Y')`
+  <br>
+  .font200[
+  [`r rfa("github")`](https://github.com/inSilecoInc/interactiveRaster)
+  [`r rfa("database")`](https://github.com/inSilecoInc/interactiveRaster/raw/gh-pages/data_and_script.zip)
+  [`r rfa("file-pdf")`](https://github.com/inSilecoInc/interactiveRaster/raw/gh-pages/raster_p2.pdf)
+  ]
 ]
 
-<br><br><br><br>
+<br>
+<img src="img/logoW.png" width="140px"></img>
 
-<img src="img/logoW.png" width="150px"></img>
+![deploy workshop](https://github.com/inSilecoInc/interactiveRaster/workflows/deploy%20workshop/badge.svg)
 
-.instructors[Content under [`r rfa("creative-commons")` `r rfa("creative-commons-by")`](https://creativecommons.org/licenses/by/4.0/) unless othewise specified]
+.instructors[Content under [`r rfa("creative-commons")` `r rfa("creative-commons-by")`](https://creativecommons.org/licenses/by/4.0/) unless otherwise specified]
+
 
 
 
@@ -725,7 +733,7 @@ tm_facets(as.layers = TRUE,
 
 # Package [`tmap`](https://cran.r-project.org/package=tmap)
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, purl = FALSE}
 countdown::countdown(minutes = 10, seconds = 0)
 ```
 
@@ -739,8 +747,9 @@ countdown::countdown(minutes = 10, seconds = 0)
 
 # Solution !!!
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, include = FALSE, purl = FALSE}
 # manipulation 
+library(stars)
 ras <- read_stars("data/bathy.tif")   
 stl <- sf::st_read("data/st_laurence.geojson") 
 ras2 <- st_warp(ras, cellsize = .05, crs = st_crs(ras))

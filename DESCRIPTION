@@ -11,11 +11,12 @@ Imports:
   icon,
   leaflet,
   mapview,
+  pagedown,
   raster,
   stars,
   tmap,
   xaringan
 Remotes: 
-  mitchelloharawild/icon
-  gadenbuie/countdown
+  mitchelloharawild/icon,
+  gadenbuie/countdown,
   eDrivers/eDrivers 

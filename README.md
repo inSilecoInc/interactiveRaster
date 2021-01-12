@@ -1,6 +1,6 @@
-# :mortar_hat: Interactive raster visualization with R
+# :mortar_borad: Interactive raster visualization with R
 
-In this workshop
+In this workshop:
 
 - How to visualize rasters interactively
   - Start with htmlwidgets, developed by RStudio

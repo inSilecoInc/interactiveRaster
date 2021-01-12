@@ -28,7 +28,9 @@ jobs:
           icon::download_fontawesome()
           rmarkdown::render("index.Rmd", "all")
           pagedown::chrome_print("index.html")
-          file.rename("index.pdf", "raster_p1.pdf"  
+          file.rename("index.pdf", "raster_p1.pdf")
+          knitr::purl("index.Rmd", "script.R")
+          zip("data_and_script.zip", c("data", "script.R"))
         shell: Rscript {0}
         
       - name: Deploy workshop 
