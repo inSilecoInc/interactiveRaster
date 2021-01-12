@@ -307,7 +307,7 @@ lf
 ]
 
 .pull-right2[
-```{r, fig.width = 6, fig.height = 6, echo = FALSE}
+```{r load_leaflet, fig.width = 6, fig.height = 6, echo = FALSE}
 library(leaflet)
 lf <- leaflet() %>%
  addTiles(group = 'Default') %>%
@@ -329,7 +329,7 @@ lf
 The pipe operator `%>%` is a chained method that lets you pass an intermediate result to the next function. Thus, these two code chunks provide the same output:
 
 .pull-left[
-```{r}
+```{r use_pipe}
 # Example with pipe operator
 lf <- leaflet() %>%
  setView(lng = -63,
