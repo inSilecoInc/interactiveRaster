@@ -1,0 +1,39 @@
+name: deploy workshop
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: rocker/verse:latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@master
+      - name: Install apt-get packages
+        run: |-
+          sudo apt-get update
+          sudo apt-get install -y pandoc libudunits2-0 libudunits2-dev
+          sudo apt-get install -y chromium-browser libproj-dev libgeos-dev
+          sudo apt-get install -y libgdal-dev r-cran-ncdf4 r-cran-remotes r-cran-sf
+      
+      - name: Install R packages 
+        run: |
+          Rscript -e "install.packages('remotes', repos = 'https://muug.ca/mirror/cran/')"
+          Rscript -e "remotes::install_deps()"
+      - name: Build presentation
+        run: |
+          icon::download_fontawesome()
+          rmarkdown::render("index.Rmd", "all")
+          pagedown::chrome_print("index.html")
+          file.rename("index.pdf", "raster_p1.pdf"  
+        shell: Rscript {0}
+        
+      - name: Deploy workshop 
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.DEPLOY_TOKEN }}
+          publish_dir: .
+          

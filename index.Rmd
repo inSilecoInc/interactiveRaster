@@ -731,30 +731,37 @@ countdown::countdown(minutes = 10, seconds = 0)
 
 <br/>
 
-### `r rfa("star")` Recreate the static map you generated before using `tmap` as an interactive map
+### `r rfa("star")` Recreate the static map you generated before using `tmap` as an interactive map but first **resample** the raster to have a maximum of 20 cells per °.
 
 ### `r rfa("star")` `r rfa("star")` Export the interactive map as a `.html` files
 
 ---
 
-# Solution !!!!!!
+# Solution !!!
 
 ```{r, eval = FALSE}
-# manipulation
-ras_v <- ras[stl]
+# manipulation 
+ras <- read_stars("data/bathy.tif")   
+stl <- sf::st_read("data/st_laurence.geojson") 
+ras2 <- st_warp(ras, cellsize = .05, crs = st_crs(ras))
+ras_v <- ras2[stl]
 names(ras_v) <- "Elevation"
-# colors
-pal <- colorRampPalette(c("#c7cbce", "#687677", "#222d3d", "#25364a",
-  "#172434", "#ad6a11", "#e6a331", "#e4be29", "#f2ea8b"))
-# raster
-elv <- tm_shape(ras_v) +
-  tm_raster("Elevation", breaks = seq(-800, 200, 100), palette = pal(11), midpoint = NA) +
-  tm_layout(main.title = "St-Lawrence (River & Gulf)", main.title.color = "#ad6a11") +
+# view mode
+tmap_mode("view")
+# colors 
+pal <- colorRampPalette(c("#c7cbce", "#687677", "#222d3d", "#25364a", "#172434", "#ad6a11", "#e6a331", "#e4be29", "#f2ea8b"))
+# raster 
+elv <- tm_shape(ras_v) + 
+  tm_raster("Elevation", breaks = seq(-800, 200, 100), palette = pal(11), midpoint = NA) + 
+  tm_layout(main.title = "St-Lawrence river & Gulf", main.title.color = "#ad6a11") + 
   tm_xlab("longitude", size = 0.5) + tm_ylab("latitude", size = 0.5) +
   tm_graticules(lwd = .5, col = "#aaaaaa")
-
-tm_mode('view')
-elv
+  
+shp <- tm_shape(stl) + tm_borders(col = "black", lwd = 2)
+oth <- tm_compass(type = "8star", position = c("left", "bottom")) +     
+  tm_scale_bar(breaks = c(0, 100, 200), text.size = .8) + 
+  tm_logo(c("https://www.r-project.org/logo/Rlogo.png"), position = c("right", "top"), height = 3) 
+elv + shp + oth
 ```
 
 ---

@@ -14,7 +14,7 @@ Imports:
   raster,
   stars,
   tmap,
-  xaringa,
+  xaringan
 Remotes: 
   mitchelloharawild/icon
   gadenbuie/countdown
