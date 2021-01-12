@@ -348,7 +348,7 @@ lf <- addTiles(map = lf,
 
 .font70[`%>%` is similar to the `+` operator used by `ggplot2` and `tmap`]
 
-.font70[See [here](https://www.datacamp.com/community/tutorials/pipe-r-tutorial) for a full description of the history and use of pipes. Note that in the upcoming release 
+.font70[See [here](https://www.datacamp.com/community/tutorials/pipe-r-tutorial) for a full description of the history and use of pipes. Note that in the upcoming release
 
 A [simple native pipe syntax](https://cran.r-project.org/doc/manuals/r-devel/NEWS.html), `|>`, will be included in the upcoming stable release.
 
@@ -529,29 +529,31 @@ lf
 
 # Package [`leaflet`](https://cran.r-project.org/package=leaflet)
 
-## Exporting and sharing
-
-TODO
-
----
-
-# Package [`leaflet`](https://cran.r-project.org/package=leaflet)
-
 ```{r, echo = FALSE}
-countdown::countdown(minutes = 20, seconds = 0)
+countdown::countdown(minutes = 15, seconds = 0)
 ```
 
 <br/>
 
-### `r rfa("star")` Generate a leaflet map with
+### `r rfa("star")` Select two raster layers to map and change their projection to EPSG:3857
+
+- Use [https://epsg.io/](https://epsg.io/) to get the `proj` string
+
+### `r rfa("star")` Generate a leaflet map with:
 
 - Two tile providers (hint: visit [this](http://leaflet-extras.github.io/leaflet-providers/preview/index.html) website)
-- Two raster layers of your choice
+
+- The two newly projected raster layers
+
+- Set view to the Bedford Institute of Oceanography
+  - Get coordinates from [Google Maps](https://www.google.ca/maps) or [OpenStreetMap](https://www.openstreetmap.org/)
 
 ### `r rfa("star")` `r rfa("star")` Use a custom color palette to render the rasters
 
-### `r rfa("star")` `r rfa("star")` `r rfa("star")` Export as html document
-
+???
+prj <- '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs'
+rasterObject <- projectRaster(rasterObject, crs = CRS(prj))
+coords <- c(44.6828, -63.6118)
 
 ---
 
@@ -591,7 +593,7 @@ The interactive map can then be shared with the `html` file and `map_files/` fol
 # Package [`mapview`](https://cran.r-project.org/package=mapview)
 
 ```{r, echo = FALSE}
-countdown::countdown(minutes = 10, seconds = 0)
+countdown::countdown(minutes = 7, seconds = 0)
 ```
 
 <br/>
@@ -733,6 +735,27 @@ countdown::countdown(minutes = 10, seconds = 0)
 
 ### `r rfa("star")` `r rfa("star")` Export the interactive map as a `.html` files
 
+---
+
+# Solution !!!!!!
+
+```{r, eval = FALSE}
+# manipulation
+ras_v <- ras[stl]
+names(ras_v) <- "Elevation"
+# colors
+pal <- colorRampPalette(c("#c7cbce", "#687677", "#222d3d", "#25364a",
+  "#172434", "#ad6a11", "#e6a331", "#e4be29", "#f2ea8b"))
+# raster
+elv <- tm_shape(ras_v) +
+  tm_raster("Elevation", breaks = seq(-800, 200, 100), palette = pal(11), midpoint = NA) +
+  tm_layout(main.title = "St-Lawrence (River & Gulf)", main.title.color = "#ad6a11") +
+  tm_xlab("longitude", size = 0.5) + tm_ylab("latitude", size = 0.5) +
+  tm_graticules(lwd = .5, col = "#aaaaaa")
+
+tm_mode('view')
+elv
+```
 
 ---
 
@@ -1135,7 +1158,7 @@ rmarkdown::render('dashboard.Rmd')
 # Package [`flexdashboard`](https://cran.r-project.org/package=flexdashboard)
 
 ```{r, echo = FALSE}
-countdown::countdown(minutes = 20, seconds = 0)
+countdown::countdown(minutes = 15, seconds = 0)
 ```
 
 <br/>
@@ -1143,7 +1166,14 @@ countdown::countdown(minutes = 20, seconds = 0)
 
 ### `r rfa("star")` Create a `flexdashboard` layout with 2 columns and 2 rows
 
-### `r rfa("star")` `r rfa("star")` Include 4 charts of your choice, including at least 2 interactive maps
+--
+
+### `r rfa("star")` `r rfa("star")` Include 4 charts of your choice. Include at least:
+
+  - 1 interactive map using `leaflet()`
+  - 1 interactive map using `tmap()`
+
+--
 
 ### `r rfa("star")` `r rfa("star")` `r rfa("star")` Render the dashboard as `.html` document
 
@@ -1178,24 +1208,430 @@ class: inverse, center, middle
 
 ---
 
-1. Explain what Shiny is
-2. It's components
-  3. User interface - front end
-  4. Server - back end
-  5. Run app
-6. `flexdashboard` provides the option of running the dashboard using shiny
-7. Recreate same dashboard, but with options to select raster layers and raster operation
+# Shiny applications
+
+## `r rfa("r-project")` package
+
+[`shiny`](https://cran.r-project.org/package=shiny) .font90[12/2012 (0.2.3) &nbsp; // &nbsp; 06/2020 (1.5.0)]
+
+
+> [`shiny`](https://cran.r-project.org/package=shiny) makes it incredibly easy to build interactive web applications with R. Automatic "reactive" binding between inputs and outputs and extensive prebuilt widgets make it possible to build beautiful, responsive, and powerful applications with minimal effort.
+
+
+<img src="https://images.ctfassets.net/k49d63tr8kcn/5lTAuBdak8qsamGwC0kEMO/61052086f3eca17dc27bd79b4b5737aa/Shiny.png" alt="" width="45%">
 
 ---
 
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## Pros
+
+- The package makes it possible to use R's data analysis and visualization capabilities in an app. Although we focuse on mapping rasters, `shiny` allows for much more extensive capabilities.
+
+--
+
+- Applications can be run locally, deployed on R Studio's [Shiny Server](https://rstudio.com/products/shiny/shiny-server/), or to a hosting service such as [shinyapps.io](https://shinyapps.io)
+
+--
+
+- Extensive documentation and material is available for shiny applications.
+
+--
+
+- See R Studio's [Shiny apps library](https://shiny.rstudio.com/gallery/) for many examples
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## Cons
+
+- Syntax and logic of a Shiny application is a little bit different than what we are usually used to with R
+
+--
+
+- Harder to troubleshoot and know exactly what is going on under the hood
+
+--
+
+- Because it is more complex, it is worthwhile to really ponder whether a shiny application is necessary for what we wish to accomplish
 
 
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+.font80[
+```{r, eval = FALSE}
+# General environment / data preparation
+library(shiny)
+library(leaflet)
+library(raster)
+Hypoxia <- raster('data/Hypoxia.tif')
+Acidification <- raster('data/Acidification.tif')
+Fisheries <- raster('data/FisheriesDD.tif')
+rstack <- stack(Hypoxia, Acidification, Fisheries)
+
+# User interface
+ui <- fluidPage(
+ radioButtons(inputId = 'raster', label = 'Rasters to select',
+   choices = c("Hypoxia" = "Hypoxia", "Fisheries" = "FisheriesDD",
+               "Acidification" = "Acidification")),
+ leafletOutput(outputId = "map", height = 800)
+)
+
+# Server function
+server <- function(input, output) {
+ output$map <- renderLeaflet({
+  leaflet() %>%
+  addProviderTiles("CartoDB.Positron") %>%
+  addRasterImage(rstack[[input$raster]])
+ })
+}
+
+# Shiny app function
+shinyApp(ui, server)
+```
+]
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## Structure
+
+- User interface object (`ui`):
+  - Controls layout and appearance of the app
+  - Front end of the app
+  - What the user sees and interacts with
+
+--
+
+- Server function (`server`):
+  - Instructions sent to the computer/server running R to build the app
+  - Back end of the application
+
+--
+
+- A call to the shinyApp function (`shinyApp(ui, server)`)
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## General environment
+
+```{r, eval = TRUE}
+# General environment / data preparation
+library(shiny)
+library(leaflet)
+library(raster)
+Hypoxia <- raster('data/Hypoxia.tif')
+Acidification <- raster('data/Acidification.tif')
+Fisheries <- raster('data/FisheriesDD.tif')
+rstack <- stack(Hypoxia, Acidification, Fisheries)
+```
+
+- The general environment - *i.e.* before the `ui` object and `server` function can be used to load libraries, data, functions, or any other components that can be used by your app and be loaded only once.
+
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## [Control widget](https://shiny.rstudio.com/gallery/widget-gallery.html)
+
+```{r, eval = FALSE}
+radioButtons(inputId = 'raster', label = 'Rasters to select',
+  choices = c("Hypoxia" = "Hypoxia", "Fisheries" = "FisheriesDD",
+              "Acidification" = "Acidification")),
+```
+
+- In the `ui` object, used to provide choices to a user to interact with the app
+
+--
+
+- Creates a vector object called `input$inputId` with the elements chosen by the user that can be used by the server to update displayed elements. For example, if the user selects `'Hypoxia'`, then this value will be accessible through `input$raster` on the server side of the application.
+
+```{r, eval = FALSE}
+# This code cannot actually be checked, do not try to run
+input$raster
+> "Hypoxia"
+```
+
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## [Control widget](https://shiny.rstudio.com/gallery/widget-gallery.html)
+
+
+<iframe src="https://shiny.rstudio.com/gallery/widget-gallery.html" style="width:100%; height:55vh;"></iframe>
+
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## [Reactive output](https://shiny.rstudio.com/tutorial/written-tutorial/lesson4/)
+
+```{r, eval = FALSE}
+leafletOutput(outputId = "map", height = 800)
+```
+
+- Displayed elements that automatically respond when a user plays with a control widget.
+
+- In the `ui` object, tells Shiny where to position the element to display
+
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## [Reactive output](https://shiny.rstudio.com/tutorial/written-tutorial/lesson4/)
+
+.font90[
+| Output function (`ui`) | Creates |
+| :-------------- | :------ |
+| `dataTableOutput()` |	DataTable |
+| `htmlOutput()` |	raw HTML |
+| `imageOutput()` |	image |
+| `plotOutput()` |	plot |
+| `tableOutput()` |	table |
+| `textOutput()` |	text |
+| `uiOutput()` |	raw HTML |
+| `verbatimTextOutput()` |	text |
+| `leafletOutput()` | leaflet map |
+]
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## [Reactive output](https://shiny.rstudio.com/tutorial/written-tutorial/lesson4/)
+
+```{r, eval = FALSE}
+output$map <- renderLeaflet({
+ leaflet() %>%
+ addProviderTiles("CartoDB.Positron") %>%
+ addRasterImage(rstack[[input$raster]])
+})
+```
+
+- Displayed elements that automatically respond when a user plays with a control widget.
+
+- In the `server` function, tells Shiny how to build the object
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## [Reactive output](https://shiny.rstudio.com/tutorial/written-tutorial/lesson4/)
+
+.font90[
+| Output function (`ui`) | Render function (`server`) | Creates |
+| :--------------------- | :------------------------- | :------ |
+| `dataTableOutput` |	`renderDataTable()` | DataTable |
+| `htmlOutput` | `renderImage()` | raw HTML |
+| `imageOutput` |	`renderImage()` | image |
+| `plotOutput` |	`renderPlot()` | plot |
+| `tableOutput` |	`renderTable()` | table |
+| `textOutput` |	`renderText()` | text |
+| `uiOutput` | `renderUI()` | raw HTML |
+| `verbatimTextOutput` | `renderVerbatimText()` |	text |
+| `leafletOutput()` | `renderLeaflet()` | leaflet map |
+]
+
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny) & [`flexdashboard`](https://CRAN.R-project.org/package=flexdashboard)
+
+- Using `shiny` with `flexdashboard` can allow you to take advantage of the easy layout options provided by `flexdashboard` to structure your interactive dashboard with capabilities provided by `shiny`
+
+--
+
+- Note that, if you want to, all the necessary functions for custom layouts are available directly using Shiny
+
+--
+
+- Start by generating the same draft dashboard as before
+
+```{r, eval = FALSE}
+library(rmarkdown)
+library(flexdashboard)
+draft("shiny_dashboard.Rmd",
+      template = "flex_dashboard",
+      package = "flexdashboard")
+```
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny) & [`flexdashboard`](https://CRAN.R-project.org/package=flexdashboard)
+
+- Add `runtime: shiny` to the YAML metadata
+
+```md
+---
+title: "Untitled"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+```
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny) & [`flexdashboard`](https://CRAN.R-project.org/package=flexdashboard)
+
+- In the `setup` code chunk, you can include calls to libraries and objects
+
+````md
+`r ''`
+```r setup
+# General environment / data preparation
+library(shiny)
+library(leaflet)
+library(raster)
+Hypoxia <- raster('data/Hypoxia.tif')
+Acidification <- raster('data/Acidification.tif')
+Fisheries <- raster('data/FisheriesDD.tif')
+rstack <- stack(Hypoxia, Acidification, Fisheries)
+```
+````
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny) & [`flexdashboard`](https://CRAN.R-project.org/package=flexdashboard)
+
+Use `## Column {.sidebar}` to include a sidebar in which to embed the control widgets you wish to use
+
+````md
+## Column {.sidebar}
+
+`r ''`
+```r
+radioButtons(inputId = 'raster', label = 'Rasters to select',
+  choices = c("Hypoxia" = "Hypoxia", "Fisheries" = "FisheriesDD",
+              "Acidification" = "Acidification"))
+```
+````
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny) & [`flexdashboard`](https://CRAN.R-project.org/package=flexdashboard)
+
+- Populate the layout with the reactive outputs you wish to display
+
+
+````md
+### Chart A
+
+`r ''`
+```r
+leafletOutput(outputId = "map")
+
+output$map <- renderLeaflet({
+ leaflet() %>%
+ addProviderTiles("CartoDB.Positron") %>%
+ addRasterImage(rstack[[input$raster]])
+})
+
+```
+````
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny) & [`flexdashboard`](https://CRAN.R-project.org/package=flexdashboard)
+
+```{r, echo = FALSE}
+countdown::countdown(minutes = 5, seconds = 0)
+```
+
+- Finally, run the `shiny` app with `flexdashboard` with `rmarkdown::run()`
+
+```{r, eval = FALSE}
+rmarkdown::run('shiny_dashboard.Rmd')
+```
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## [Reactive expressions](https://shiny.rstudio.com/tutorial/written-tutorial/lesson6/)
+
+- A reactive expression is an R expression that uses widget input and returns a value
+
+- For example, if you want to perform a raster calculation to combine raster stacks as a function of user input
+
+```{r, eval = FALSE}
+rasterFunction <- reactive({
+  sum(rstack[[input$raster]], na.rm = T) %>%
+  calc(function(x) ifelse(x == 0, NA, x))
+})
+
+```
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny)
+
+## [Observe expression](https://shiny.rstudio.com/reference/shiny/latest/observe.html)
+
+- An observer is like a reactive expression in that it can read reactive values and call reactive expressions, and will automatically re-execute when those dependencies change
+
+- For example, we may want to update a raster when a user selects different options
+
+```{r, eval = FALSE}
+observe({
+  # Clear maps if no raster is selected
+  leafletProxy(mapId = "map2") %>%
+  clearImages() %>% # Clears previous raster
+  addRasterImage(x = rasterFunction())
+})
+```
+
+---
+
+# [`shiny`](https://CRAN.R-project.org/package=shiny) & [`flexdashboard`](https://CRAN.R-project.org/package=flexdashboard)
+
+```{r, echo = FALSE}
+countdown::countdown(minutes = 20, seconds = 0)
+```
+
+Starting from the `shiny` app we just created using `flexdashboard`:
+
+### `r rfa("star")` Modify the global environment elements by :
+
+- Normalize `FisheriesDD` values (hint: `maxValue()`)
+- Change raster projection to EPSG:3857
+- Create a raster stack with rasters
+
+--
+
+### `r rfa("star")` `r rfa("star")` Add a checkbox input widget with the 3 rasters to the sidebar
+
+--
+
+### `r rfa("star")` `r rfa("star")` Add a leaflet map in place of Chart B
+
+--
+
+### `r rfa("star")` `r rfa("star")` `r rfa("star")` Add a `reactive()` function that sums raster as a function of layers selected by the user in the checkbox input widget
+
+--
+
+### `r rfa("star")` `r rfa("star")` `r rfa("star")` Add an `observe()` function that updates the new leaflet map with the reactive object
 
 
 
 
 
 ---
+
 
 class: inverse, center, middle
 
@@ -1224,3 +1660,12 @@ Also, keep in mind that although `r rfa("r-project")` packages provide bindings 
 - [HTML](www.w3schools.com/html): web page
 - [CSS](www.w3schools.com/css): style
 - [JavaScript](www.w3schools.com/js): interactive content
+
+
+---
+
+# Recap
+
+## An example:
+
+[eDrivers](https://david-beauchesne.shinyapps.io/edriversapp/) `shiny` app 
