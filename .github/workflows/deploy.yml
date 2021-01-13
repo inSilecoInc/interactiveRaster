@@ -15,8 +15,8 @@ jobs:
       - name: Install apt-get packages
         run: |-
           sudo apt-get update
-          sudo apt-get install -y pandoc libudunits2-0 libudunits2-dev
-          sudo apt-get install -y chromium-browser libproj-dev libgeos-dev
+          sudo apt-get install -y pandoc rsync libudunits2-0 libudunits2-dev
+          sudo apt-get install -y libproj-dev libgeos-dev
           sudo apt-get install -y libgdal-dev r-cran-ncdf4 r-cran-remotes r-cran-sf
       
       - name: Install R packages 
@@ -40,5 +40,4 @@ jobs:
         with:
           github_token: ${{ secrets.DEPLOY_TOKEN }}
           publish_dir: .
-          keep_files: true
-          
+          exclude_assets: '.github,.gitignore,DESCRIPTION'
