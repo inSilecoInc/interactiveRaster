@@ -14,7 +14,7 @@ output:
 ---
 
 
-```{r setup, include = FALSE}
+```{r setup, include = FALSE, purl = FALSE}
 knitr::opts_chunk$set(
   comment = "#>",
   collapse = TRUE,
@@ -49,8 +49,7 @@ class: title-slide, middle
   <br>
   .font200[
   [`r rfa("github")`](https://github.com/inSilecoInc/interactiveRaster)
-  [`r rfa("database")`](https://github.com/inSilecoInc/interactiveRaster/raw/gh-pages/data_and_script.zip)
-  [`r rfa("file-pdf")`](https://github.com/inSilecoInc/interactiveRaster/raw/gh-pages/raster_p2.pdf)
+  [`r rfa("database")`](https://github.com/inSilecoInc/interactiveRaster/blob/main/data_and_script.zip)
   ]
 ]
 
@@ -86,11 +85,15 @@ class: inverse, center, middle
 
 --
 
-2. Learn how to produce and share interactive raster visualizations with `r rfa("r-project")`
+2. Learn how to create and share interactive raster maps
 
 --
 
-3. Learn how to build interactive dashboards with `r rfa("r-project")`
+3. Learn how to build interactive dashboards
+
+--
+
+4. Learn how to build simple shiny apps
 
 
 ---
@@ -278,7 +281,6 @@ class: inverse, center, middle
   - Rasters
   - Popups
 - Embed maps in knitr/R Markdown documents and Shiny apps
-- Render spatial objects
 ]
 
 ---
@@ -290,7 +292,7 @@ class: inverse, center, middle
 .pull-left2[
 Leaflet map centered on the St. Lawrence
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, purl = FALSE}
 library(leaflet)
 lf <- leaflet() %>%
  setView(lng = -63,
@@ -373,7 +375,7 @@ A [simple native pipe syntax](https://cran.r-project.org/doc/manuals/r-devel/NEW
 
 Use `addProviderTiles()` for other options.
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, purl = FALSE}
 leaflet() %>%
  setView(lng = -63,
          lat = 48,
@@ -386,7 +388,7 @@ leaflet() %>%
 ]
 
 .pull-right2[
-```{r, fig.width = 6, fig.height = 6, echo = FALSE}
+```{r base_maps, fig.width = 6, fig.height = 6, echo = FALSE}
 leaflet() %>%
       setView(lng = -63,
               lat = 48,
@@ -406,7 +408,7 @@ leaflet() %>%
 Use [`addLayersControl()`](https://www.rdocumentation.org/packages/leaflet/versions/2.0.3/topics/addLayersControl) to toggle base map selection.
 
 .font90[
-```{r, eval = FALSE}
+```{r, eval = FALSE, purl = FALSE}
 lf <-
  lf %>%
  addProviderTiles('Esri.OceanBasemap',
@@ -428,7 +430,7 @@ Note that we are adding features to the preexisting `lf` object
 ]
 
 .pull-right2[
-```{r, fig.width = 6, fig.height = 6, echo = FALSE}
+```{r multiple_base, fig.width = 6, fig.height = 6, echo = FALSE}
 lf <- lf %>%
  addProviderTiles('Esri.OceanBasemap',
      group = 'Ocean') %>%
@@ -455,7 +457,7 @@ First, get some raster layers from the [`eDrivers`](https://github.com/eDrivers/
 
 Let's get data for hypoxia, demersal destructive fisheries (trawl and dredge), and acidification.
 
-```{r, eval = TRUE}
+```{r eDrivers, eval = TRUE}
 # Install eDrivers
 # devtools::install_github('eDrivers/eDrivers')
 
@@ -465,6 +467,7 @@ fetchDrivers(drivers = c('Hypoxia','FisheriesDD','Acidification'),
              output = 'data')
 
 # Raster objects from eDrivers class objects
+library(raster)
 hyp <- raster('data/Hypoxia.tif')
 fish <- raster('data/FisheriesDD.tif')
 acid <- raster('data/Acidification.tif')
@@ -482,7 +485,7 @@ acid <- raster('data/Acidification.tif')
 
 Use [`addRasterImage()`](https://www.rdocumentation.org/packages/leaflet/versions/2.0.3/topics/addRasterImage) to add rasters from `raster` package.
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, purl = FALSE}
 lf <- lf %>%
  addRasterImage(hyp,group = 'Hyp') %>%
  addRasterImage(fish,group = 'Fish') %>%
@@ -501,7 +504,7 @@ lf
 ]
 
 .pull-right2[
-```{r, fig.width = 6, fig.height = 6, echo = FALSE, eval = TRUE}
+```{r leaflet_raster, fig.width = 6, fig.height = 6, echo = FALSE, eval = TRUE}
 # Add layers to leaflet map
 lf <- lf %>%
  addRasterImage(hyp,group = 'Hyp') %>%
@@ -518,6 +521,7 @@ lf
 ```
 ]
 
+.font80[[`addStarsImage()`](https://rdrr.io/github/r-spatial/leafem/man/addStarsImage.html) is the equivalent function for stars objects]
 
 ---
 
@@ -527,7 +531,7 @@ lf
 
 **A couple warnings:**
 
-- `leaflet` uses the [EPSG:3857](https://spatialreference.org/ref/sr-org/7483/) projection and will convert the layers you add automatically. You may want to reproject your rasters manually to save computing time.
+- `leaflet` uses the [EPSG:3857](https://spatialreference.org/ref/sr-org/7483/) projection and will convert the layers you add automatically. You may want to reproject your rasters manually with argument `project = FALSE` to save computing time.
 
 --
 
@@ -537,11 +541,9 @@ lf
 
 # Package [`leaflet`](https://cran.r-project.org/package=leaflet)
 
-```{r, echo = FALSE}
-countdown::countdown(minutes = 15, seconds = 0)
+```{r, echo = FALSE, purl = FALSE}
+countdown::countdown(minutes = 20, seconds = 0)
 ```
-
-<br/>
 
 ### `r rfa("star")` Select two raster layers to map and change their projection to EPSG:3857
 
@@ -556,12 +558,38 @@ countdown::countdown(minutes = 15, seconds = 0)
 - Set view to the Bedford Institute of Oceanography
   - Get coordinates from [Google Maps](https://www.google.ca/maps) or [OpenStreetMap](https://www.openstreetmap.org/)
 
-### `r rfa("star")` `r rfa("star")` Use a custom color palette to render the rasters
+### `r rfa("star")` `r rfa("star")` Use a custom color palette to render the rasters (hint: look up [`colorNumeric()`](https://www.rdocumentation.org/packages/leaflet/versions/2.0.3/topics/colorNumeric))
 
-???
+
+---
+
+# Solution
+
+```{r leafletEx, eval = FALSE, include = FALSE, purl = FALSE}
+# Project rasters
 prj <- '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs'
-rasterObject <- projectRaster(rasterObject, crs = CRS(prj))
-coords <- c(44.6828, -63.6118)
+hyp2 <- projectRaster(hyp, crs = CRS(prj))
+acid2 <- projectRaster(acid, crs = CRS(prj))
+
+# Colors
+cols <- c("#c7cbce", "#687677", "#222d3d", "#25364a", "#172434",
+          "#ad6a11", "#e6a331", "#e4be29", "#f2ea8b")
+
+# Leaflet map
+leaflet() %>%
+  setView(lng = -63.6118, lat = 44.6828, zoom = 5) %>%
+  addProviderTiles('Esri.OceanBasemap', group = 'Ocean') %>%
+  addProviderTiles("OpenTopoMap", group = "Topo") %>%
+  addRasterImage(hyp2, group = 'Hyp', project = FALSE,
+                colors = colorNumeric(cols, values(hyp2), na.color = "transparent")) %>%
+  addRasterImage(acid2, group = 'Acid', project = FALSE,
+                colors = colorNumeric(cols, values(acid2), na.color = "transparent")) %>%
+
+  # Reset layer selection
+  addLayersControl(baseGroups = c('Ocean', 'Topo'),
+    overlayGroups = c('Hyp','Acid'),
+    position = 'topleft')
+```
 
 ---
 
@@ -578,7 +606,7 @@ coords <- c(44.6828, -63.6118)
 
 # Package [`mapview`](https://cran.r-project.org/package=mapview)
 
-```{r, eval = TRUE, fig.width = 12, fig.height = 6}
+```{r mapview, eval = TRUE, fig.width = 12, fig.height = 6}
 library(mapview)
 mv <- mapview(hyp) + fish + acid
 mv
@@ -589,8 +617,9 @@ mv
 
 # Package [`mapview`](https://cran.r-project.org/package=mapview)
 
-```{r, eval = TRUE, fig.width = 12, fig.height = 6}
-mapshot(mv, url = 'data/map.html')
+```{r mapview_export, eval = TRUE, fig.width = 12, fig.height = 6}
+dir.create('output')
+mapshot(mv, url = 'output/map.html')
 ```
 
 The interactive map can then be shared with the `html` file and `map_files/` folder
@@ -600,15 +629,46 @@ The interactive map can then be shared with the `html` file and `map_files/` fol
 
 # Package [`mapview`](https://cran.r-project.org/package=mapview)
 
-```{r, echo = FALSE}
-countdown::countdown(minutes = 7, seconds = 0)
+```{r, echo = FALSE, purl = FALSE}
+countdown::countdown(minutes = 10, seconds = 0)
 ```
 
 <br/>
 
 ### `r rfa("star")` Recreate the map you generated before with `leaflet` using `mapview`
 
-### `r rfa("star")` `r rfa("star")` Export it as a `html` file
+--
+
+### `r rfa("star")` Export it as a `html` file in the `output/` folder
+
+--
+
+### `r rfa("star")` Open the `.html` file in your web browser
+
+--
+
+### `r rfa("star")` `r rfa("star")` `r rfa("star")` `r rfa("star")` Send it to your best friend!
+
+---
+
+# Solution
+
+```{r mapviewEx, eval = FALSE, include = FALSE, purl = FALSE}
+# Color ramp palette
+pal <- colorRampPalette(cols)
+
+# Mapview
+mv <- mapview(hyp2, col.regions = pal) +
+      mapview(acid2, col.regions = pal)
+
+# Export
+dir.create('output')
+mapshot(mv, url = 'output/mapviewEx.html')
+
+# Send email
+# Not actually going to do this! But! If you want to send emails through R, check this blog post:
+# https://blog.mailtrap.io/r-send-email/
+```
 
 ---
 
@@ -635,7 +695,7 @@ countdown::countdown(minutes = 7, seconds = 0)
 
 .pull-left[
 .font90[
-```{r, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = TRUE}
+```{r, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = TRUE, purl = FALSE}
 library(tmap)
 tmap_mode("plot")
 static <- tm_shape(fish) +
@@ -647,7 +707,7 @@ static
 
 .pull-right[
 .font90[
-```{r, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = TRUE}
+```{r, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = TRUE, purl = FALSE}
 library(tmap)
 tmap_mode("view")
 inter <- tm_shape(fish) +
@@ -663,7 +723,7 @@ inter
 
 .pull-left[
 .font90[
-```{r, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = FALSE}
+```{r tmap_static, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = FALSE}
 library(tmap)
 tmap_mode("plot")
 static <- tm_shape(fish) +
@@ -679,7 +739,7 @@ tmap_save(static,
 
 .pull-right[
 .font90[
-```{r, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = FALSE}
+```{r tmap_interactive, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = FALSE}
 library(tmap)
 tmap_mode("view")
 inter <- tm_shape(fish) +
@@ -702,7 +762,7 @@ tmap_save(inter,
 .pull-left2[
 Use `tm_facets()` to include multiple raster layers
 
-```{r, eval = FALSE}
+```{r, eval = FALSE, purl = FALSE}
 rstack <- stack(hyp, fish, acid)
 tmap_mode("view")
 tm_shape(rstack) +
@@ -717,7 +777,7 @@ tm_facets(as.layers = TRUE,
 
 
 .pull-right2[
-```{r, fig.width = 6, fig.height = 6, echo = FALSE, eval = TRUE}
+```{r tmap_facets, fig.width = 6, fig.height = 6, echo = FALSE, eval = TRUE}
 rstack <- stack(hyp, fish, acid)
 tmap_mode("view")
 tm_shape(rstack) +
@@ -741,37 +801,45 @@ countdown::countdown(minutes = 10, seconds = 0)
 
 ### `r rfa("star")` Recreate the static map you generated before using `tmap` as an interactive map but first **resample** the raster to have a maximum of 20 cells per °.
 
-### `r rfa("star")` `r rfa("star")` Export the interactive map as a `.html` files
+### `r rfa("star")` Export it as a `.html` file in the `output/` folder
+
+### `r rfa("star")` View the '.html' file in your web browser
+
 
 ---
 
-# Solution !!!
+# Solution
 
-```{r, eval = FALSE, include = FALSE, purl = FALSE}
-# manipulation 
+.font90[
+```{r tmapEx, eval = FALSE, include = FALSE, purl = FALSE}
+# manipulation
 library(stars)
-ras <- read_stars("data/bathy.tif")   
-stl <- sf::st_read("data/st_laurence.geojson") 
+ras <- read_stars("data/bathy.tif")
+stl <- sf::st_read("data/st_laurence.geojson")
 ras2 <- st_warp(ras, cellsize = .05, crs = st_crs(ras))
 ras_v <- ras2[stl]
 names(ras_v) <- "Elevation"
 # view mode
 tmap_mode("view")
-# colors 
+# colors
 pal <- colorRampPalette(c("#c7cbce", "#687677", "#222d3d", "#25364a", "#172434", "#ad6a11", "#e6a331", "#e4be29", "#f2ea8b"))
-# raster 
-elv <- tm_shape(ras_v) + 
-  tm_raster("Elevation", breaks = seq(-800, 200, 100), palette = pal(11), midpoint = NA) + 
-  tm_layout(main.title = "St-Lawrence river & Gulf", main.title.color = "#ad6a11") + 
+# raster
+elv <- tm_shape(ras_v) +
+  tm_raster("Elevation", breaks = seq(-800, 200, 100), palette = pal(11), midpoint = NA) +
+  tm_layout(main.title = "St-Lawrence river & Gulf", main.title.color = "#ad6a11") +
   tm_xlab("longitude", size = 0.5) + tm_ylab("latitude", size = 0.5) +
   tm_graticules(lwd = .5, col = "#aaaaaa")
-  
+
 shp <- tm_shape(stl) + tm_borders(col = "black", lwd = 2)
-oth <- tm_compass(type = "8star", position = c("left", "bottom")) +     
-  tm_scale_bar(breaks = c(0, 100, 200), text.size = .8) + 
-  tm_logo(c("https://www.r-project.org/logo/Rlogo.png"), position = c("right", "top"), height = 3) 
-elv + shp + oth
+oth <- tm_compass(type = "8star", position = c("left", "bottom")) +
+  tm_scale_bar(breaks = c(0, 100, 200), text.size = .8) +
+  tm_logo(c("https://www.r-project.org/logo/Rlogo.png"), position = c("right", "top"), height = 3)
+tmapEx <- elv + shp + oth
+
+# Export
+tmap_save(tmapEx, filename = "output/tmapEx.html")
 ```
+]
 
 ---
 
@@ -874,7 +942,7 @@ R Markdown produces dynamic document in a variety of format.
 ## How does R Markdown work?
 
 .pull-left[
-```{r echo=FALSE, out.width="100%"}
+```{r echo=FALSE, out.width="100%", purl = FALSE}
 knitr::include_graphics("img/Rmdformat.png")
 ```
 ]
@@ -890,10 +958,6 @@ knitr::include_graphics("img/Rmdformat.png")
 ---
 
 # Package [`flexdashboard`](https://cran.r-project.org/package=flexdashboard)
-
-```{r, echo = FALSE}
-countdown::countdown(minutes = 2, seconds = 0)
-```
 
 ```{r, eval = FALSE}
 library(rmarkdown)
@@ -920,6 +984,9 @@ output:
     vertical_layout: fill
 ---
 
+```r
+library(flexdashboard)
+```
 
 Column {data-width=650}
 ------------------------------
@@ -963,6 +1030,9 @@ output:
     vertical_layout: fill
 ---
 
+```r
+library(flexdashboard)
+```
 
 Column {data-width=650}
 ------------------------------
@@ -992,7 +1062,15 @@ Column {data-width=350}
 ]
 
 .pull-right[
-.font80[
+.font70[
+
+**Setup global environment** (optional)
+````md
+```r
+library(flexdashboard)
+```
+````
+
 **Columns** of width X: level 2 markdown header
 
 ```md
@@ -1036,6 +1114,9 @@ output:
     vertical_layout: fill
 ---
 
+```r
+library(flexdashboard)
+```
 
 Column {data-width=650}
 ------------------------------
@@ -1073,23 +1154,33 @@ Column {data-width=350}
 
 # Package [`flexdashboard`](https://cran.r-project.org/package=flexdashboard)
 
-```{r, echo = FALSE}
-countdown::countdown(minutes = 2, seconds = 0)
-```
-
 Use `rmarkdown::render()` to render `.html` dashboard and visualize the still empty dashboard by opening `dashboard.html` in your web browser.
 
 ```r
 rmarkdown::render('dashboard.Rmd')
 ```
 
+
 ---
 
 # Package [`flexdashboard`](https://cran.r-project.org/package=flexdashboard)
 
-```{r, echo = FALSE}
-countdown::countdown(minutes = 2, seconds = 0)
+We start by setting up the global environment for the dashboard
+
+````md
+```r
+library(flexdashboard)
+library(raster)
+library(tmap)
+library(plotly)
+hyp <- raster('data/Hypoxia.tif')
+acid <- raster('data/Acidification.tif')
+rstack <- stack(hyp, acid)
 ```
+````
+---
+
+# Package [`flexdashboard`](https://cran.r-project.org/package=flexdashboard)
 
 We will now populate the dashboard with some visual components.
 
@@ -1112,10 +1203,6 @@ tm_facets(as.layers = TRUE,
 
 # Package [`flexdashboard`](https://cran.r-project.org/package=flexdashboard)
 
-```{r, echo = FALSE}
-countdown::countdown(minutes = 2, seconds = 0)
-```
-
 We will now populate the dashboard with some visual components.
 
 Chart 2: Overlaid histograms of values for hypoxia and acidification using `plotly`
@@ -1134,10 +1221,6 @@ plot_ly(alpha = 0.6, nbinsx = 30) %>%
 ---
 
 # Package [`flexdashboard`](https://cran.r-project.org/package=flexdashboard)
-
-```{r, echo = FALSE}
-countdown::countdown(minutes = 2, seconds = 0)
-```
 
 We will now populate the dashboard with some visual components.
 
@@ -1158,10 +1241,6 @@ tm_shape(s) +
 
 # Package [`flexdashboard`](https://cran.r-project.org/package=flexdashboard)
 
-```{r, echo = FALSE}
-countdown::countdown(minutes = 2, seconds = 0)
-```
-
 Render the now populated dashboard and visualize it by opening `dashboard.html` in your web browser.
 
 ```r
@@ -1173,12 +1252,16 @@ rmarkdown::render('dashboard.Rmd')
 
 # Package [`flexdashboard`](https://cran.r-project.org/package=flexdashboard)
 
-```{r, echo = FALSE}
-countdown::countdown(minutes = 15, seconds = 0)
+```{r, echo = FALSE, purl = FALSE}
+countdown::countdown(minutes = 20, seconds = 0)
 ```
 
 <br/>
 
+
+### `r rfa("star")` Create a `flexdashboard` template
+
+--
 
 ### `r rfa("star")` Create a `flexdashboard` layout with 2 columns and 2 rows
 
@@ -1191,7 +1274,18 @@ countdown::countdown(minutes = 15, seconds = 0)
 
 --
 
+### `r rfa("star")` `r rfa("star")` Give a name to your dashboard and your charts
+
+--
+
 ### `r rfa("star")` `r rfa("star")` `r rfa("star")` Render the dashboard as `.html` document
+
+---
+
+# Solution
+
+Load solution file here: [`r rfa("database")`](https://github.com/inSilecoInc/interactiveRaster/blob/main/dashboard_Sol.Rmd)
+
 
 ---
 
@@ -1278,7 +1372,7 @@ class: inverse, center, middle
 # [`shiny`](https://CRAN.R-project.org/package=shiny)
 
 .font80[
-```{r, eval = FALSE}
+```{r shiny, eval = FALSE}
 # General environment / data preparation
 library(shiny)
 library(leaflet)
@@ -1316,20 +1410,20 @@ shinyApp(ui, server)
 
 ## Structure
 
-- User interface object (`ui`):
+- User interface object `ui`:
   - Controls layout and appearance of the app
   - Front end of the app
   - What the user sees and interacts with
 
 --
 
-- Server function (`server`):
+- Server function `server`:
   - Instructions sent to the computer/server running R to build the app
   - Back end of the application
 
 --
 
-- A call to the shinyApp function (`shinyApp(ui, server)`)
+- A call to the shinyApp function `shinyApp(ui, server)`
 
 ---
 
@@ -1563,11 +1657,7 @@ output$map <- renderLeaflet({
 
 # [`shiny`](https://CRAN.R-project.org/package=shiny) & [`flexdashboard`](https://CRAN.R-project.org/package=flexdashboard)
 
-```{r, echo = FALSE}
-countdown::countdown(minutes = 5, seconds = 0)
-```
-
-- Finally, run the `shiny` app with `flexdashboard` with `rmarkdown::run()`
+- Finally, we can run the `shiny` app with `flexdashboard` using `rmarkdown::run()`
 
 ```{r, eval = FALSE}
 rmarkdown::run('shiny_dashboard.Rmd')
@@ -1614,36 +1704,49 @@ observe({
 
 # [`shiny`](https://CRAN.R-project.org/package=shiny) & [`flexdashboard`](https://CRAN.R-project.org/package=flexdashboard)
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, purl = FALSE}
 countdown::countdown(minutes = 20, seconds = 0)
 ```
 
-Starting from the `shiny` app we just created using `flexdashboard`:
+### .font80[`r rfa("star")` Start from the `shiny` app we just described. File available here: [`r rfa("database")`](https://github.com/inSilecoInc/interactiveRaster/blob/main/shiny_dashboard.Rmd)]
 
-### `r rfa("star")` Modify the global environment elements by :
+--
 
+
+### .font80[`r rfa("star")` Modify the global environment elements by:]
+
+.font70[
 - Normalize `FisheriesDD` values (hint: `maxValue()`)
 - Change raster projection to EPSG:3857
 - Create a raster stack with rasters
+]
 
 --
 
-### `r rfa("star")` `r rfa("star")` Add a checkbox input widget with the 3 rasters to the sidebar
+
+### .font80[`r rfa("star")` `r rfa("star")` Add a checkbox input widget with the 3 rasters to the sidebar (hint: `?checkboxGroupInput`)
+]
 
 --
 
-### `r rfa("star")` `r rfa("star")` Add a leaflet map in place of Chart B
+### .font80[`r rfa("star")` `r rfa("star")` Add a leaflet map in place of Chart B
+]
 
 --
 
-### `r rfa("star")` `r rfa("star")` `r rfa("star")` Add a `reactive()` function that sums raster as a function of layers selected by the user in the checkbox input widget
+### .font80[`r rfa("star")` `r rfa("star")` `r rfa("star")` Add a `reactive()` function that sums raster as a function of layers selected by the user in the checkbox input widget
+]
 
 --
 
-### `r rfa("star")` `r rfa("star")` `r rfa("star")` Add an `observe()` function that updates the new leaflet map with the reactive object
+### .font80[`r rfa("star")` `r rfa("star")` `r rfa("star")` Add an `observe()` function that updates the new leaflet map with the reactive object
+]
 
+---
 
+# Solution
 
+Load solution file here: [`r rfa("database")`](https://github.com/inSilecoInc/interactiveRaster/blob/main/shiny_dashboard_Sol.Rmd)
 
 
 ---
@@ -1684,4 +1787,4 @@ Also, keep in mind that although `r rfa("r-project")` packages provide bindings 
 
 ## An example:
 
-[eDrivers](https://david-beauchesne.shinyapps.io/edriversapp/) `shiny` app 
+[*eDrivers*](https://david-beauchesne.shinyapps.io/edriversapp/) `shiny` app

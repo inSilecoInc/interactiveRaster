@@ -1,0 +1,67 @@
+---
+title: "Awesome dashboard"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r}
+library(flexdashboard)
+library(raster)
+library(tmap)
+library(plotly)
+library(leaflet)
+hyp <- raster('data/Hypoxia.tif')
+acid <- raster('data/Acidification.tif')
+fish <- raster('data/FisheriesDD.tif')
+rstack <- stack(hyp, acid)
+```
+
+## Column {data-width=500}
+
+### Awesome chart 1
+
+```{r}
+tmap_mode('view')
+tm_shape(rstack) +
+  tm_raster(title = c("Hypoxia",
+                      "Acidification")) +
+tm_facets(as.layers = TRUE,
+  free.scales.raster = TRUE)
+```
+
+### Magnificent chart 2
+
+```{r}
+leaflet() %>%
+  setView(lng = -63.6118, lat = 44.6828, zoom = 5) %>%
+  addProviderTiles('Esri.OceanBasemap', group = 'Ocean') %>%
+  addRasterImage(fish, group = 'Fish') %>%
+
+  # Reset layer selection
+  addLayersControl(baseGroups = c('Ocean', 'Topo'),
+    overlayGroups = c('Fish'),
+    position = 'topleft')
+
+```
+
+## Column {data-width=500}
+
+### Incredible chart 3
+
+```{r}
+plot_ly(alpha = 0.6, nbinsx = 30) %>%
+  add_histogram(x = values(hyp), name = 'Hypoxia') %>%
+  add_histogram(x = values(acid), name = 'Acidification') %>%
+  layout(barmode = "overlay")
+```
+
+### Ok chart 4
+
+```{r}
+s <- sum(rstack, na.rm = TRUE)
+s[is.na(values(acid))] <- NA
+tm_shape(s) +
+ tm_raster(title = "Cumulative exposure")
+```
