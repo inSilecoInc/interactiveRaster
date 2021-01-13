@@ -1,12 +1,15 @@
 # Project-specific files
-index.html
-index.pdf
 assets/
 index_files/
 output/
-dashboard.Rmd
+dashboard.html
 data/map.html
 data/map_files/
+data_and_script/
+dashboard_Sol.html
+dashboard_Ex.html
+
+
 
 # History files
 .Rhistory

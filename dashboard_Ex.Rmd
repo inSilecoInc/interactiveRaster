@@ -1,0 +1,50 @@
+---
+title: "Untitled"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r}
+library(flexdashboard)
+library(raster)
+library(tmap)
+library(plotly)
+hyp <- raster('data/Hypoxia.tif')
+acid <- raster('data/Acidification.tif')
+rstack <- stack(hyp, acid)
+```
+
+## Column {data-width=650}
+
+### Chart A
+
+```{r}
+tmap_mode('view')
+tm_shape(rstack) +
+  tm_raster(title = c("Hypoxia",
+                      "Acidification")) +
+tm_facets(as.layers = TRUE,
+  free.scales.raster = TRUE)
+```
+
+## Column {data-width=350}
+
+### Chart B
+
+```{r}
+plot_ly(alpha = 0.6, nbinsx = 30) %>%
+  add_histogram(x = values(hyp), name = 'Hypoxia') %>%
+  add_histogram(x = values(acid), name = 'Acidification') %>%
+  layout(barmode = "overlay")
+```
+
+### Chart C
+
+```{r}
+s <- sum(rstack, na.rm = TRUE)
+s[is.na(values(acid))] <- NA
+tm_shape(s) +
+ tm_raster(title = "Cumulative exposure")
+```

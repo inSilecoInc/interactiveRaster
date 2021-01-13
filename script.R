@@ -1,32 +1,3 @@
-## ----setup, include = FALSE---------------------------------------------------
-knitr::opts_chunk$set(
-  comment = "#>",
-  collapse = TRUE,
-  warning = FALSE,
-  message = FALSE,
-  dev = "png",
-  fig.width = 5,
-  fig.height = 4.5,
-  fig.align = 'center',
-  width = 120
-)
-mypar <- list(fg = "#37abc8", bg = "transparent", las = 1)
-par(mypar)
-# library(icon)
-rfa <- function(...) icon::fontawesome(...)
-
-
-## ---- eval = FALSE------------------------------------------------------------
-## library(leaflet)
-## lf <- leaflet() %>%
-##  setView(lng = -63,
-##          lat = 48,
-##          zoom = 5)
-##  addTiles(group = 'Default')
-## 
-## lf
-
-
 ## ----load_leaflet, fig.width = 6, fig.height = 6, echo = FALSE----------------
 library(leaflet)
 lf <- leaflet() %>%
@@ -58,16 +29,9 @@ lf <- addTiles(map = lf,
                group = 'Default')
 
 
-## ---- eval = FALSE------------------------------------------------------------
-## leaflet() %>%
-##  setView(lng = -63,
-##          lat = 48,
-##          zoom = 5) %>%
-##  addProviderTiles('Esri.OceanBasemap',
-##                   group = 'Ocean')
 
 
-## ---- fig.width = 6, fig.height = 6, echo = FALSE-----------------------------
+## ----base_maps, fig.width = 6, fig.height = 6, echo = FALSE-------------------
 leaflet() %>%
       setView(lng = -63,
               lat = 48,
@@ -76,24 +40,9 @@ leaflet() %>%
                        group = 'Ocean')
 
 
-## ---- eval = FALSE------------------------------------------------------------
-## lf <-
-##  lf %>%
-##  addProviderTiles('Esri.OceanBasemap',
-##      group = 'Ocean') %>%
-##  addProviderTiles("OpenTopoMap",
-##      group = "Topo") %>%
-## 
-##  # Add layer selection
-##  addLayersControl(
-##      baseGroups = c('Default','Ocean',
-##                     'Topo'),
-##      position = 'topleft')
-## 
-## lf
 
 
-## ---- fig.width = 6, fig.height = 6, echo = FALSE-----------------------------
+## ----multiple_base, fig.width = 6, fig.height = 6, echo = FALSE---------------
 lf <- lf %>%
  addProviderTiles('Esri.OceanBasemap',
      group = 'Ocean') %>%
@@ -108,7 +57,7 @@ lf <- lf %>%
 lf
 
 
-## ---- eval = TRUE-------------------------------------------------------------
+## ----eDrivers, eval = TRUE----------------------------------------------------
 # Install eDrivers
 # devtools::install_github('eDrivers/eDrivers')
 
@@ -118,29 +67,15 @@ fetchDrivers(drivers = c('Hypoxia','FisheriesDD','Acidification'),
              output = 'data')
 
 # Raster objects from eDrivers class objects
+library(raster)
 hyp <- raster('data/Hypoxia.tif')
 fish <- raster('data/FisheriesDD.tif')
 acid <- raster('data/Acidification.tif')
 
 
-## ---- eval = FALSE------------------------------------------------------------
-## lf <- lf %>%
-##  addRasterImage(hyp,group = 'Hyp') %>%
-##  addRasterImage(fish,group = 'Fish') %>%
-##  addRasterImage(acid,group = 'Acid') %>%
-## 
-## # Reset layer selection
-## addLayersControl(
-##    baseGroups = c('Default','Ocean',
-##                   'Topo'),
-##    overlayGroups = c('Hyp','Fish',
-##                      'Acid'),
-##    position = 'topleft')
-## 
-## lf
 
 
-## ---- fig.width = 6, fig.height = 6, echo = FALSE, eval = TRUE----------------
+## ----leaflet_raster, fig.width = 6, fig.height = 6, echo = FALSE, eval = TRUE----
 # Add layers to leaflet map
 lf <- lf %>%
  addRasterImage(hyp,group = 'Hyp') %>%
@@ -156,41 +91,30 @@ addLayersControl(
 lf
 
 
-## ---- echo = FALSE------------------------------------------------------------
-countdown::countdown(minutes = 15, seconds = 0)
 
 
-## ---- eval = TRUE, fig.width = 12, fig.height = 6-----------------------------
+
+
+## ----mapview, eval = TRUE, fig.width = 12, fig.height = 6---------------------
 library(mapview)
 mv <- mapview(hyp) + fish + acid
 mv
 
 
-## ---- eval = TRUE, fig.width = 12, fig.height = 6-----------------------------
-mapshot(mv, url = 'data/map.html')
+## ----mapview_export, eval = TRUE, fig.width = 12, fig.height = 6--------------
+dir.create('output')
+mapshot(mv, url = 'output/map.html')
 
 
-## ---- echo = FALSE------------------------------------------------------------
-countdown::countdown(minutes = 7, seconds = 0)
 
 
-## ---- fig.width = 5.5, fig.height = 5, echo = TRUE, eval = TRUE---------------
-library(tmap)
-tmap_mode("plot")
-static <- tm_shape(fish) +
-          tm_raster(title = "Fisheries")
-static
 
 
-## ---- fig.width = 5.5, fig.height = 5, echo = TRUE, eval = TRUE---------------
-library(tmap)
-tmap_mode("view")
-inter <- tm_shape(fish) +
-         tm_raster(title = "Fisheries")
-inter
 
 
-## ---- fig.width = 5.5, fig.height = 5, echo = TRUE, eval = FALSE--------------
+
+
+## ----tmap_static, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = FALSE----
 ## library(tmap)
 ## tmap_mode("plot")
 ## static <- tm_shape(fish) +
@@ -202,7 +126,7 @@ inter
 ##           filename = "output/Fisheries.png")
 
 
-## ---- fig.width = 5.5, fig.height = 5, echo = TRUE, eval = FALSE--------------
+## ----tmap_interactive, fig.width = 5.5, fig.height = 5, echo = TRUE, eval = FALSE----
 ## library(tmap)
 ## tmap_mode("view")
 ## inter <- tm_shape(fish) +
@@ -214,19 +138,9 @@ inter
 ##           filename = "output/Fisheries.html")
 
 
-## ---- eval = FALSE------------------------------------------------------------
-## rstack <- stack(hyp, fish, acid)
-## tmap_mode("view")
-## tm_shape(rstack) +
-##   tm_raster(title = c("Hypoxia",
-##               "Fisheries",
-##               "Acidification")) +
-## tm_facets(as.layers = TRUE,
-##   free.scales.raster = TRUE)
-## 
 
 
-## ---- fig.width = 6, fig.height = 6, echo = FALSE, eval = TRUE----------------
+## ----tmap_facets, fig.width = 6, fig.height = 6, echo = FALSE, eval = TRUE----
 rstack <- stack(hyp, fish, acid)
 tmap_mode("view")
 tm_shape(rstack) +
@@ -241,12 +155,6 @@ tm_facets(as.layers = TRUE,
 
 
 
-## ----echo=FALSE, out.width="100%"---------------------------------------------
-knitr::include_graphics("img/Rmdformat.png")
-
-
-## ---- echo = FALSE------------------------------------------------------------
-countdown::countdown(minutes = 2, seconds = 0)
 
 
 ## ---- eval = FALSE------------------------------------------------------------
@@ -257,31 +165,9 @@ countdown::countdown(minutes = 2, seconds = 0)
 ##       package = "flexdashboard")
 
 
-## ---- echo = FALSE------------------------------------------------------------
-countdown::countdown(minutes = 2, seconds = 0)
 
 
-## ---- echo = FALSE------------------------------------------------------------
-countdown::countdown(minutes = 2, seconds = 0)
-
-
-## ---- echo = FALSE------------------------------------------------------------
-countdown::countdown(minutes = 2, seconds = 0)
-
-
-## ---- echo = FALSE------------------------------------------------------------
-countdown::countdown(minutes = 2, seconds = 0)
-
-
-## ---- echo = FALSE------------------------------------------------------------
-countdown::countdown(minutes = 2, seconds = 0)
-
-
-## ---- echo = FALSE------------------------------------------------------------
-countdown::countdown(minutes = 15, seconds = 0)
-
-
-## ---- eval = FALSE------------------------------------------------------------
+## ----shiny, eval = FALSE------------------------------------------------------
 ## # General environment / data preparation
 ## library(shiny)
 ## library(leaflet)
@@ -355,10 +241,6 @@ rstack <- stack(Hypoxia, Acidification, Fisheries)
 ##       package = "flexdashboard")
 
 
-## ---- echo = FALSE------------------------------------------------------------
-countdown::countdown(minutes = 5, seconds = 0)
-
-
 ## ---- eval = FALSE------------------------------------------------------------
 ## rmarkdown::run('shiny_dashboard.Rmd')
 
@@ -378,8 +260,4 @@ countdown::countdown(minutes = 5, seconds = 0)
 ##   clearImages() %>% # Clears previous raster
 ##   addRasterImage(x = rasterFunction())
 ## })
-
-
-## ---- echo = FALSE------------------------------------------------------------
-countdown::countdown(minutes = 20, seconds = 0)
 
