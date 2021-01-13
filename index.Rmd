@@ -95,6 +95,13 @@ class: inverse, center, middle
 
 4. Learn how to build simple shiny apps
 
+--
+
+Focus on `raster` package for simplicity, but all tools presented can work with `stars`
+
+--
+
+**Objective of the day:** Everyone should be able to create and share interactive maps to visualize rasters and embed them in simple dashboards and shiny applications
 
 ---
 
@@ -238,7 +245,7 @@ class: inverse, center, middle
 
 # <a href="https://leafletjs.com/"><img src="https://leafletjs.com/docs/images/logo.png" alt="" width="25%"></a>
 
-## JavaScript library
+## Leaflet library
 
 > Leaflet is the leading open-source JavaScript library for mobile-friendly interactive maps. Weighing just about 39 KB of JS, it has all the mapping features most developers ever need.
 
@@ -521,8 +528,6 @@ lf
 ```
 ]
 
-.font80[[`addStarsImage()`](https://rdrr.io/github/r-spatial/leafem/man/addStarsImage.html) is the equivalent function for stars objects]
-
 ---
 
 # Package [`leaflet`](https://cran.r-project.org/package=leaflet)
@@ -531,11 +536,22 @@ lf
 
 **A couple warnings:**
 
-- `leaflet` uses the [EPSG:3857](https://spatialreference.org/ref/sr-org/7483/) projection and will convert the layers you add automatically. You may want to reproject your rasters manually with argument `project = FALSE` to save computing time.
+- `leaflet` uses the [EPSG:3857](https://spatialreference.org/ref/sr-org/7483/) projection and will convert the layers you add automatically. You may want to reproject your rasters manually with argument `project = FALSE` in `addRasterImage()` to save computing time.
 
 --
 
-- Raster size is limited by default. Use argument `maxBytes` in `addRasterImage()` to change this.
+- Raster size is limited by default. Use argument `maxBytes` in `addRasterImage()` to change this. (Hint: try to add `bathy.tif` to a leaflet map)
+
+---
+
+# Package [`leaflet`](https://cran.r-project.org/package=leaflet)
+
+- Leaflet maps can be exported using `saveWidget()` from the `htmlwidget` package
+
+```{r export_leaflet, eval = FALSE}
+dir.create('output')
+htmlwidgets::saveWidget(lf, file="output/lf.html")
+```
 
 ---
 
@@ -545,26 +561,32 @@ lf
 countdown::countdown(minutes = 20, seconds = 0)
 ```
 
-### `r rfa("star")` Select two raster layers to map and change their projection to EPSG:3857
+### .font90[`r rfa("star")` Select two raster layers to map and change their projection to EPSG:3857]
 
+.font80[
 - Use [https://epsg.io/](https://epsg.io/) to get the `proj` string
+]
 
-### `r rfa("star")` Generate a leaflet map with:
+### .font90[`r rfa("star")` Generate a leaflet map with:]
 
+.font80[
 - Two tile providers (hint: visit [this](http://leaflet-extras.github.io/leaflet-providers/preview/index.html) website)
 
 - The two newly projected raster layers
 
 - Set view to the Bedford Institute of Oceanography
   - Get coordinates from [Google Maps](https://www.google.ca/maps) or [OpenStreetMap](https://www.openstreetmap.org/)
+]
 
-### `r rfa("star")` `r rfa("star")` Use a custom color palette to render the rasters (hint: look up [`colorNumeric()`](https://www.rdocumentation.org/packages/leaflet/versions/2.0.3/topics/colorNumeric))
+### .font90[`r rfa("star")` `r rfa("star")` Use a custom color palette to render the rasters (hint: look up [`colorNumeric()`](https://www.rdocumentation.org/packages/leaflet/versions/2.0.3/topics/colorNumeric))]
 
+### .font90[`r rfa("star")` `r rfa("star")` Render a single raster on map startup (hint: look up [`hideGroup()`](https://rdrr.io/cran/leaflet/man/showGroup.html))]
 
 ---
 
 # Solution
 
+.font90[
 ```{r leafletEx, eval = FALSE, include = FALSE, purl = FALSE}
 # Project rasters
 prj <- '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs'
@@ -588,8 +610,12 @@ leaflet() %>%
   # Reset layer selection
   addLayersControl(baseGroups = c('Ocean', 'Topo'),
     overlayGroups = c('Hyp','Acid'),
-    position = 'topleft')
+    position = 'topleft') %>%
+
+  # Hide 2 layers
+  hideGroup(c("Fish","Acid"))
 ```
+]
 
 ---
 
@@ -898,12 +924,14 @@ class: inverse, center, middle
 
 # Interactive data dashboards in `r rfa("r-project")`
 
-<iframe src="https://beta.rstudioconnect.com/jjallaire/htmlwidgets-highcharter/htmlwidgets-highcharter.html#sales-by-category" style="width:100%; height:55vh;"></iframe>
+<iframe src="https://beta.rstudioconnect.com/jjallaire/htmlwidgets-highcharter/htmlwidgets-highcharter.html#sales-by-category" style="width:100%; height:65vh;"></iframe>
 
 
 ---
 
 # A (very!) quick intro to R Markdown<sup>*</sup>
+
+.font70[<sup>*</sup>See [R Markdown](https://rmarkdown.rstudio.com/) documentation for more details and [here](https://insileco.github.io/ResearchDown/) for a more complete presentation]
 
 ## R Markdown universe
 
@@ -916,11 +944,12 @@ R Markdown produces dynamic document in a variety of format.
 * help to document your research through notebook ([`bookdown`](https://CRAN.R-project.org/package=bookdown))
 * build an academic blog or website ([`blogdown`](https://CRAN.R-project.org/package=blogdown))
 
-.font70[<sup>*</sup>See [R Markdown](https://rmarkdown.rstudio.com/) documentation for more details and [here](https://insileco.github.io/ResearchDown/) for a more complete presentation]
 
 ---
 
 # A (very!) quick intro to R Markdown<sup>*</sup>
+
+.font70[<sup>*</sup>See [R Markdown](https://rmarkdown.rstudio.com/) documentation for more details and [here](https://insileco.github.io/ResearchDown/) for a more complete presentation]
 
 ## But what's R Markdown?
 
@@ -932,12 +961,11 @@ R Markdown produces dynamic document in a variety of format.
 - ["A computational document."](http://radar.oreilly.com/2011/07/wolframs-computational-documen.html) (✔️)
 - [Wizardry.](https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/rmarkdown_wizards.png) (🧙)
 
-
-.font70[<sup>*</sup>See [R Markdown](https://rmarkdown.rstudio.com/) documentation for more details and [here](https://insileco.github.io/ResearchDown/) for a more complete presentation]
-
 ---
 
 # A (very!) quick intro to R Markdown<sup>*</sup>
+
+.font70[<sup>*</sup>See [R Markdown](https://rmarkdown.rstudio.com/) documentation for more details and [here](https://insileco.github.io/ResearchDown/) for a more complete presentation]
 
 ## How does R Markdown work?
 
@@ -952,8 +980,6 @@ knitr::include_graphics("img/Rmdformat.png")
 - I press knit, a document appears, and I believe that anything happening in between could be actual magic.
 - `knitr` executes the code and converts `.Rmd` to `.md`; Pandoc renders the `.md` file to the output format you want.
 ]
-
-.font70[<sup>*</sup>See [R Markdown](https://rmarkdown.rstudio.com/) documentation for more details and [here](https://insileco.github.io/ResearchDown/) for a more complete presentation]
 
 ---
 
@@ -1461,10 +1487,10 @@ radioButtons(inputId = 'raster', label = 'Rasters to select',
 
 --
 
-- Creates a vector object called `input$inputId` with the elements chosen by the user that can be used by the server to update displayed elements. For example, if the user selects `'Hypoxia'`, then this value will be accessible through `input$raster` on the server side of the application.
+- Creates a list object called `input` with `inputId` as vectors containing the elements chosen by the user that can be used by the server to update displayed elements. For example, if the user selects `'Hypoxia'`, then this value will be accessible through `input$raster` on the server side of the application.
 
 ```{r, eval = FALSE}
-# This code cannot actually be checked, do not try to run
+input <- list(raster = 'Hypoxia')
 input$raster
 > "Hypoxia"
 ```
@@ -1477,7 +1503,7 @@ input$raster
 ## [Control widget](https://shiny.rstudio.com/gallery/widget-gallery.html)
 
 
-<iframe src="https://shiny.rstudio.com/gallery/widget-gallery.html" style="width:100%; height:55vh;"></iframe>
+<iframe src="https://shiny.rstudio.com/gallery/widget-gallery.html" style="width:100%; height:65vh;"></iframe>
 
 
 ---
