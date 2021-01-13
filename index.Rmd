@@ -587,7 +587,7 @@ countdown::countdown(minutes = 20, seconds = 0)
 # Solution
 
 .font90[
-```{r leafletEx, eval = FALSE, include = FALSE, purl = FALSE}
+```{r leafletEx, eval = FALSE, include = TRUE, purl = FALSE}
 # Project rasters
 prj <- '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs'
 hyp2 <- projectRaster(hyp, crs = CRS(prj))
@@ -679,7 +679,7 @@ countdown::countdown(minutes = 10, seconds = 0)
 
 # Solution
 
-```{r mapviewEx, eval = FALSE, include = FALSE, purl = FALSE}
+```{r mapviewEx, eval = FALSE, include = TRUE, purl = FALSE}
 # Color ramp palette
 pal <- colorRampPalette(cols)
 
@@ -837,7 +837,7 @@ countdown::countdown(minutes = 10, seconds = 0)
 # Solution
 
 .font90[
-```{r tmapEx, eval = FALSE, include = FALSE, purl = FALSE}
+```{r tmapEx, eval = FALSE, include = TRUE, purl = FALSE}
 # manipulation
 library(stars)
 ras <- read_stars("data/bathy.tif")
