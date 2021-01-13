@@ -1,0 +1,25 @@
+Package: placeholder
+Type: workshop
+Title: Interactive raster visualization with R
+Version: 0.0.0.9000
+Authors@R: c(
+  person("inSileco Inc.", role = c("aut", "cre"), email = "kevin.cazelles@gmail.com")
+  )
+Imports:
+  bibtex,
+  countdown,
+  eDrivers,
+  flexdashboard,
+  icon,
+  leaflet,
+  mapview,
+  pagedown,
+  raster,
+  rgdal,
+  stars,
+  tmap,
+  xaringan
+Remotes: 
+  mitchelloharawild/icon,
+  gadenbuie/countdown,
+  eDrivers/eDrivers 

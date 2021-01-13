@@ -1,0 +1,27 @@
+title: Hypoxia
+subtitle: ''
+description: Hypoxia index on the sea floor using bottom dissolved oxygen
+rawData:
+  source: Blais, M., Galbraith, P. S., Plourde, S., Scarratt, M., Devine, L., and
+    Lehoux, C. (2019). Chemical and Biological Oceanographic Conditions in the Estuary
+    and Gulf of St. Lawrence during 2017. DFO Can. Sci. Advis. Sec. Res. Doc. 2019/009.
+    Iv + 56 p.
+  contact: Marjolaine Blais
+dataDescription:
+  units: ml*L^{−1}
+  spatialResolution: Lat/long
+  temporalResolution: August-September
+  years: 2013-2017
+  projection:
+    proj4string: +proj=lcc +lat_1=60 +lat_2=46 +lat_0=44 +lon_0=-68.5 +x_0=0 +y_0=0
+      +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs
+    egsp: '32198'
+  extent:
+    xmin: '-80000'
+    ymin: '360000'
+    xmax: '770000'
+    ymax: '810000'
+availability:
+  rawData: 'yes'
+  code: 'yes'
+  driver: 'yes'

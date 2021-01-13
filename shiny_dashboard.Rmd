@@ -1,0 +1,63 @@
+---
+title: "Untitled"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+# General environment / data preparation
+library(flexdashboard)
+library(shiny)
+library(leaflet)
+library(raster)
+Hypoxia <- raster('data/Hypoxia.tif')
+Acidification <- raster('data/Acidification.tif')
+Fisheries <- raster('data/FisheriesDD.tif')
+rstack <- stack(Hypoxia, Acidification, Fisheries)
+```
+
+## Column {.sidebar}
+
+This sidebar offers the user to select which raster to visualize and combine. Under the hood, the server functions -- that is, the back end -- runs a function to sum the values of the selected rasters.
+
+```{r select, echo = FALSE}
+radioButtons(inputId = 'raster',
+             label = 'Rasters to select',
+             choices = c("Hypoxia" = "Hypoxia",
+                         "Fisheries" = "FisheriesDD",
+                         "Acidification" = "Acidification"))
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+leafletOutput(outputId = "map", height = 800)
+
+output$map <- renderLeaflet({
+ leaflet() %>%
+ addProviderTiles("CartoDB.Positron") %>%
+ addRasterImage(rstack[[input$raster]])
+})
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+
+```
+
+### Chart C
+
+```{r}
+
+```

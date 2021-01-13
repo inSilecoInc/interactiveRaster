@@ -1,0 +1,123 @@
+---
+title: "Untitled"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+# General environment / data preparation
+library(flexdashboard)
+library(shiny)
+library(leaflet)
+library(raster)
+Hypoxia <- raster('data/Hypoxia.tif')
+Acidification <- raster('data/Acidification.tif')
+FisheriesDD <- raster('data/FisheriesDD.tif')
+
+# Transform FisheriesDD
+FisheriesDD <- FisheriesDD / maxValue(FisheriesDD)
+names(FisheriesDD) <- 'FisheriesDD'
+
+
+# Change projections
+prj <- '+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs'
+Hypoxia <- projectRaster(Hypoxia, crs = CRS(prj))
+Acidification <- projectRaster(Acidification, crs = CRS(prj))
+FisheriesDD <- projectRaster(FisheriesDD, crs = CRS(prj))
+
+# Raster stack
+rstack <- stack(Hypoxia, Acidification, FisheriesDD)
+```
+
+## Column {.sidebar}
+
+This sidebar offers the user to select which raster to visualize and combine. Under the hood, the server functions -- that is, the back end -- runs a function to sum the values of the selected rasters.
+
+```{r select, echo = FALSE}
+radioButtons(inputId = 'raster',
+             label = 'Rasters to select',
+             choices = c("Hypoxia" = "Hypoxia",
+                         "Fisheries" = "FisheriesDD",
+                         "Acidification" = "Acidification"))
+```
+
+<br/>
+
+We add another control widget to select which rasters on which to apply a function.
+
+```{r, select2}
+# Checkbox input
+checkboxGroupInput(
+  inputId = 'raster2',
+  label = "Rasters to combine",
+  choices = c("Hypoxia" = "Hypoxia",
+              "Fisheries" = "FisheriesDD",
+              "Acidification" = "Acidification"),
+  selected = 'Hypoxia'
+)
+```
+
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r}
+leafletOutput(outputId = "map", height = 800)
+
+output$map <- renderLeaflet({
+ leaflet() %>%
+ addProviderTiles("CartoDB.Positron") %>%
+ addRasterImage(rstack[[input$raster]], project = FALSE)
+})
+
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r}
+leafletOutput(outputId = "map2")
+
+# Leaflet base map
+output$map2 <- renderLeaflet({
+  leaflet() %>%
+  addProviderTiles(provider = providers$CartoDB.Positron) %>%
+  setView(lng = -65, lat = 48.50, zoom  = 5)
+})
+
+# Function to calculate raster
+rasterFunction <- reactive({
+  if (length(input$raster2) > 1) {
+    sum(rstack[[input$raster2]], na.rm = T) %>%
+    calc(function(x) ifelse(x == 0, NA, x))
+  } else {
+    rstack[[input$raster2]]
+  }
+})
+
+# Update map
+observe({
+  # Clear maps if no raster is selected
+  if (length(input$raster2) == 0) {
+    leafletProxy(mapId = "map2") %>%
+    clearImages()
+  } else if (length(input$raster2) > 0) {
+    leafletProxy(mapId = "map2") %>%
+    clearImages() %>%
+    addRasterImage(x = rasterFunction(), project = FALSE)
+  }
+})
+```
+
+### Chart C
+
+```{r}
+
+```
