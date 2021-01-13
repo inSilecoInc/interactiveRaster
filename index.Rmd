@@ -49,7 +49,7 @@ class: title-slide, middle
   <br>
   .font200[
   [`r rfa("github")`](https://github.com/inSilecoInc/interactiveRaster)
-  [`r rfa("database")`](https://github.com/inSilecoInc/interactiveRaster/blob/main/data_and_script.zip)
+  [`r rfa("database")`](https://github.com/inSilecoInc/interactiveRaster/raw/gh-pages/data_and_script.zip)
   ]
 ]
 
