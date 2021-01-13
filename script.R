@@ -91,6 +91,11 @@ addLayersControl(
 lf
 
 
+## ----export_leaflet, eval = FALSE---------------------------------------------
+## dir.create('output')
+## htmlwidgets::saveWidget(lf, file="output/lf.html")
+
+
 
 
 
@@ -216,7 +221,7 @@ rstack <- stack(Hypoxia, Acidification, Fisheries)
 
 
 ## ---- eval = FALSE------------------------------------------------------------
-## # This code cannot actually be checked, do not try to run
+## input <- list(raster = 'Hypoxia')
 ## input$raster
 ## > "Hypoxia"
 
